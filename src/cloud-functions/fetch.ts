@@ -25,6 +25,9 @@ import stringReadingTime from 'reading-time';
 // 1. Increase memory limit
 // 2. Offload CPU-intesive part to the client (it likely has more than
 //    200MHz).
+//
+// TODO: Consider moving this function to be firestore-triggered. This
+// supports the offline use-case better.
 export default functions
   .runWith({
     maxInstances: 1,
@@ -66,7 +69,7 @@ export default functions
     // title, etc. We might need to resort to running puppeteer or
     // something similar.
 
-    return { url, title, description, image, minutes, words, icon };
+    return { queryUrl, url, title, description, image, minutes, words, icon };
   });
 
 // TODO: displays wrong “reading” time for YouTube
@@ -98,7 +101,7 @@ function getCanonicalUrl(originalUrl: string, hast: any): string | null {
 }
 
 function getTitle(hast: any): string | null {
-  let title = select('meta[property=og:title]')?.properties.content;
+  let title = select('meta[property=og:title]', hast)?.properties.content;
   if (title) return title;
 
   const titleTag =

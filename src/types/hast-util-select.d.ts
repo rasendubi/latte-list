@@ -1,6 +1,6 @@
 declare module 'hast-util-select' {
-  const select: any;
-  const selectAll: any;
+  const select: (selector: any, hast: any) => any;
+  const selectAll: (selector: any, hast: any) => any[];
 
   export { select, selectAll };
 }

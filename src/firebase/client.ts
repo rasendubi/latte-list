@@ -33,6 +33,14 @@ if (!firebase.apps.length) {
       // firebase.firestore().useEmulator('localhost', 8080);
       firebase.functions().useEmulator('localhost', 5001);
     }
+
+    firebase.firestore().settings({
+      cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
+    });
+    // TODO: we might need to ask the user if they’re on a trusted device
+    firebase.firestore().enablePersistence({
+      synchronizeTabs: true,
+    });
   }
 }
 
@@ -43,6 +51,33 @@ export const fetchStats = (url: string) =>
     .functions()
     .httpsCallable('fetch')({ url })
     .then(({ data }) => data);
+
+export const useStats = (url: string | null | undefined) => {
+  const [stats, setStats] = React.useState<any | null>(null);
+  // to ensure we’re not overwriting stats when getting old results
+  const i = React.useRef(0);
+  React.useEffect(() => {
+    if (stats?.url === url) {
+      return;
+    }
+    setStats(null);
+    // TODO: check if `url` is a valid URL
+    if (!url) {
+      return;
+    }
+
+    i.current++;
+    const me = i.current;
+    fetchStats(url).then((data) => {
+      if (me === i.current) {
+        setStats(data);
+      }
+    });
+    // TODO: handle error / isLoading
+  }, [url]);
+
+  return stats;
+};
 
 export function useCollection<T>(query: firebase.firestore.Query<T> | null) {
   const [result, setResult] =

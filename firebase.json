@@ -3,6 +3,7 @@
     "site": "readily",
     "predeploy": "npm run build && next export",
     "public": "out",
+    "cleanUrls": true,
     "ignore": [
       "firebase.json",
       "**/.*",
