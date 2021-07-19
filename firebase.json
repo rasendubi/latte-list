@@ -1,9 +1,15 @@
 {
   "hosting": {
     "site": "readily",
-    "predeploy": "npm run build && next export",
+    "predeploy": "npm run build:client",
     "public": "out",
     "cleanUrls": true,
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
     "ignore": [
       "firebase.json",
       "**/.*",

@@ -31,7 +31,8 @@ const ItemsListItem = ({ item, style }: ItemsListItemProps) => {
           <img src={item.image} />
         </div>
       )}
-      <style jsx>{`
+      {/* TODO: Rewrite styles */}
+      <style>{`
         .root {
           display: flex;
           width: 100%;

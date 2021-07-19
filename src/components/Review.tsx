@@ -1,7 +1,10 @@
 import React from 'react';
 
 import { useUser } from '@/context/userContext';
-import firebase, { useCollection, useCollectionData } from '@/firebase/client';
+import firebase, {
+  useCollection,
+  useCollectionData,
+} from '@/firebase/client';
 import { schedule } from '@/lib/scheduling';
 import { Item } from '@/lib/Item';
 

@@ -1,4 +1,6 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
+
 import firebase, { fetchStats } from '@/firebase/client';
 import { useUser } from '@/context/userContext';
 
@@ -51,38 +53,44 @@ const Index = ({}: IndexProps) => {
 
   const [url, setUrl] = React.useState('');
 
+  const history = useHistory();
+
   const addUrl = async () => {
-    if (user) {
-      // TODO: check `url` is a valid URL before doing a request
-      const result = await fetchStats(url);
+    history.push(`/add?url=${encodeURIComponent(url)}`);
 
-      console.log(result);
+    // if (user) {
+    //   // TODO: check `url` is a valid URL before doing a request
+    //   const result = await fetchStats(url);
 
-      const db = firebase.firestore();
-      const items = db
-        .collection('users')
-        .doc(user.uid)
-        .collection('items') as firebase.firestore.CollectionReference<Item>;
+    //   console.log(result);
 
-      const existing = (await items.where('url', '==', result.url).get())
-        .docs[0];
-      if (existing) {
-        await existing.ref.update(result);
-        if (!existing.data().scheduledOn) {
-          schedule(existing.ref);
-        }
-      } else {
-        const itemRef = await items.add({
-          url,
-          nPins: 0,
-          ...result,
-          addedOn: new Date(),
-        });
-        await schedule(itemRef);
-      }
-    }
-    setUrl('');
+    //   const db = firebase.firestore();
+    //   const items = db
+    //     .collection('users')
+    //     .doc(user.uid)
+    //     .collection('items') as firebase.firestore.CollectionReference<Item>;
+
+    //   const existing = (await items.where('url', '==', result.url).get())
+    //     .docs[0];
+    //   if (existing) {
+    //     await existing.ref.update(result);
+    //     if (!existing.data().scheduledOn) {
+    //       schedule(existing.ref);
+    //     }
+    //   } else {
+    //     const itemRef = await items.add({
+    //       url,
+    //       nPins: 0,
+    //       ...result,
+    //       addedOn: new Date(),
+    //     });
+    //     await schedule(itemRef);
+    //   }
+    // }
+    // setUrl('');
   };
+
+  console.log('re-render', 1);
 
   return (
     <div>
@@ -93,7 +101,6 @@ const Index = ({}: IndexProps) => {
         <button onClick={addUrl}>{'Add'}</button>
       </div>
       {/* <pre>{JSON.stringify(bookmarks, null, 2)}</pre> */}
-
       <Review />
       <ItemsList items={bookmarks} />
     </div>

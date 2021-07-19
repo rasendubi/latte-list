@@ -1,5 +1,6 @@
 import React from 'react';
 import getUrls from 'get-urls';
+import { useHistory } from 'react-router-dom';
 
 import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
@@ -9,8 +10,6 @@ import CardContent from '@material-ui/core/CardContent';
 import Dialog, { DialogProps } from '@material-ui/core/Dialog';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
-
-import firebase, { useStats } from '@/firebase/client';
 import {
   AppBar,
   Backdrop,
@@ -20,8 +19,9 @@ import {
   TextField,
   Toolbar,
 } from '@material-ui/core';
+
+import firebase, { useStats } from '@/firebase/client';
 import { saveItem } from '@/lib/saveItem';
-import { useRouter } from 'next/dist/client/router';
 
 export interface AddDialogProps extends DialogProps {}
 
@@ -107,13 +107,11 @@ const AddDialog = ({ ...props }: AddDialogProps) => {
     );
   }, [stats]);
 
-  const router = useRouter();
-
-  React.useEffect(() => {
-    router.prefetch('/');
-  }, [router]);
+  const history = useHistory();
 
   const data = { ...stats, title };
+
+  console.log(data);
 
   const [isSaving, setIsSaving] = React.useState(false);
 
@@ -123,7 +121,7 @@ const AddDialog = ({ ...props }: AddDialogProps) => {
     if (user) {
       await saveItem(user.uid, data);
     }
-    router.replace('/');
+    history.replace('/');
   };
 
   if (url === null) {
@@ -144,7 +142,7 @@ const AddDialog = ({ ...props }: AddDialogProps) => {
           <IconButton
             edge="start"
             color="inherit"
-            onClick={() => router.replace('/')}
+            onClick={() => history.replace('/')}
           >
             <CloseIcon />
           </IconButton>
