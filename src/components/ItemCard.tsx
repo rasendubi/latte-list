@@ -53,7 +53,12 @@ const ItemCard = ({ item, className, ...props }: ItemCardProps) => {
       square={true}
       variant="outlined"
     >
-      <CardActionArea onClick={() => window.open(item.url, '_blank')}>
+      <CardActionArea
+        component="a"
+        href={item.url}
+        target="_blank"
+        rel="noopener"
+      >
         <CardHeader title={item.title} />
         {item.image && (
           <CardMedia image={item.image} className={classes.media} />
@@ -67,7 +72,6 @@ const ItemCard = ({ item, className, ...props }: ItemCardProps) => {
             className={classes.sub}
             color="textSecondary"
           >
-            {/* <div className="sub"> */}
             {item.icon && <img className={classes.icon} src={item.icon} />}
             {item.url}
             {item.minutes && (
@@ -76,7 +80,6 @@ const ItemCard = ({ item, className, ...props }: ItemCardProps) => {
                 {' min'}
               </div>
             )}
-            {/* </div> */}
           </Typography>
         </CardContent>
       </CardActionArea>

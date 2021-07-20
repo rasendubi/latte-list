@@ -28,9 +28,10 @@ import PinIcon from '@material-ui/icons/Bookmark';
 
 import firebase, { useCollection } from '@/firebase/client';
 import { useUser } from '@/context/userContext';
-import { schedule } from './lib/scheduling';
+import { scheduleLater } from './lib/scheduling';
 import { Item } from './lib/Item';
 import ItemCard from './components/ItemCard';
+import { pinItem } from './lib/items';
 
 export interface ReviewDialogProps extends DialogProps {
   onClose?: () => void;
@@ -103,7 +104,11 @@ const ReviewDialog = ({ onClose, ...props }: ReviewDialogProps) => {
   const item = reviewQueue?.docs[0];
 
   const handleLater = () => {
-    item && schedule(item.ref);
+    item && scheduleLater(item);
+  };
+
+  const handlePin = () => {
+    item && pinItem(item);
   };
 
   const classes = useStyles();
@@ -177,6 +182,7 @@ const ReviewDialog = ({ onClose, ...props }: ReviewDialogProps) => {
                 root: classes.iconButton,
                 label: classes.iconButtonLabel,
               }}
+              onClick={handlePin}
             >
               <PinIcon />
               <Typography variant="caption">{'Pin'}</Typography>

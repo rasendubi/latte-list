@@ -1,5 +1,5 @@
 import firebase from '@/firebase/client';
-import { schedule } from '@/lib/scheduling';
+import { getScheduleLaterUpdate } from '@/lib/scheduling';
 import { Item } from '@/lib/Item';
 
 export const saveItem = async (uid: string, item: any) => {
@@ -11,16 +11,14 @@ export const saveItem = async (uid: string, item: any) => {
 
   const existing = (await items.where('url', '==', item.url).get()).docs[0];
   if (existing) {
-    await existing.ref.update(item);
-    if (!existing.data().scheduledOn) {
-      await schedule(existing.ref);
-    }
+    existing.ref.update(item);
   } else {
-    const itemRef = await items.add({
+    let data: Item = {
       nPins: 0,
       ...item,
       addedOn: new Date(),
-    });
-    await schedule(itemRef);
+    };
+    data = { ...item, ...getScheduleLaterUpdate(data) };
+    items.doc().set(data);
   }
 };

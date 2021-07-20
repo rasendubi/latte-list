@@ -17,5 +17,7 @@ export interface Item {
 
   spacingParams: SpacingParams;
 
-  scheduledOn: firebase.firestore.Timestamp;
+  addedOn: firebase.firestore.Timestamp;
+  scheduledOn: firebase.firestore.Timestamp | null;
+  pinnedOn: firebase.firestore.Timestamp | null;
 }
