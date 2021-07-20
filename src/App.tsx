@@ -1,35 +1,31 @@
 import React from 'react';
 
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
-
-import ThemeProvider from '@material-ui/styles/ThemeProvider';
-import CssBaseline from '@material-ui/core/CssBaseline';
-
-import UserProvider from '@/context/userContext';
-import theme from '@/theme';
+import { useLocation, useHistory } from 'react-router-dom';
 
 import Home from '@/Home';
 import AddDialog from '@/components/AddDialog';
+import ReviewDialog from '@/ReviewDialog';
 
 export interface AppProps {}
 
 const App = ({}: AppProps) => {
+  const location = useLocation();
+  const history = useHistory();
+
   return (
-    <UserProvider>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <BrowserRouter>
-          <Switch>
-            <Route path="/add">
-              <AddDialog fullScreen={true} open={true} />
-            </Route>
-            <Route path="/">
-              <Home />
-            </Route>
-          </Switch>
-        </BrowserRouter>
-      </ThemeProvider>
-    </UserProvider>
+    <>
+      <Home />
+      {location.pathname === '/add' && (
+        <AddDialog fullScreen={true} open={true} />
+      )}
+      {location.pathname === '/review' && (
+        <ReviewDialog
+          fullScreen={true}
+          open={true}
+          onClose={() => history.replace('/')}
+        />
+      )}
+    </>
   );
 };
 

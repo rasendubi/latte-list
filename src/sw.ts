@@ -2,12 +2,11 @@ import { precacheAndRoute } from 'workbox-precaching/precacheAndRoute';
 import { createHandlerBoundToURL } from 'workbox-precaching/createHandlerBoundToURL';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response/CacheableResponsePlugin';
 import { CacheFirst } from 'workbox-strategies/CacheFirst';
+import { NetworkOnly } from 'workbox-strategies/NetworkOnly';
 import { StaleWhileRevalidate } from 'workbox-strategies/StaleWhileRevalidate';
 import { ExpirationPlugin } from 'workbox-expiration/ExpirationPlugin';
 import { NavigationRoute } from 'workbox-routing/NavigationRoute';
 import { registerRoute } from 'workbox-routing/registerRoute';
-
-console.log('[sw] hello from service worker');
 
 declare global {
   interface Window {
@@ -18,6 +17,11 @@ declare global {
 precacheAndRoute(self.__WB_MANIFEST);
 
 registerRoute(new NavigationRoute(createHandlerBoundToURL('/index.html')));
+
+// registerRoute(
+//   ({ url }) => url.origin === 'https://firestore.googleapis.com',
+//   new NetworkOnly()
+// );
 
 // Cache the Google Fonts stylesheets with a stale-while-revalidate strategy.
 registerRoute(

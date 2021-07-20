@@ -3,10 +3,6 @@ import getUrls from 'get-urls';
 import { useHistory } from 'react-router-dom';
 
 import Typography from '@material-ui/core/Typography';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardMedia from '@material-ui/core/CardMedia';
-import CardContent from '@material-ui/core/CardContent';
 import Dialog, { DialogProps } from '@material-ui/core/Dialog';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
@@ -22,6 +18,7 @@ import {
 
 import firebase, { useStats } from '@/firebase/client';
 import { saveItem } from '@/lib/saveItem';
+import ItemCard from '@/components/ItemCard';
 
 export interface AddDialogProps extends DialogProps {}
 
@@ -40,37 +37,14 @@ const useStyles = makeStyles((theme) =>
       marginLeft: theme.spacing(1),
       marginRight: theme.spacing(1),
     },
-    card: {
-      marginTop: theme.spacing(2),
-      marginLeft: theme.spacing(1),
-      marginRight: theme.spacing(1),
-    },
     progress: {
       marginTop: theme.spacing(8),
       alignSelf: 'center',
     },
-    sub: {
-      display: 'flex',
-    },
-    icon: {
-      height: `calc(1em * ${theme.typography.caption.lineHeight})`,
-      marginRight: '0.5ch',
-    },
-    readTime: {
-      '&::before': {
-        margin: '0 0.5ch',
-        content: '"·"',
-      },
-      whiteSpace: 'nowrap',
-    },
-    media: {
-      height: 0,
-      paddingTop: '56.25%', // 16:9
-    },
-    cardContent: {
-      '&:last-child': {
-        paddingBottom: 16,
-      },
+    card: {
+      marginTop: theme.spacing(2),
+      marginLeft: theme.spacing(1),
+      marginRight: theme.spacing(1),
     },
   })
 );
@@ -110,8 +84,6 @@ const AddDialog = ({ ...props }: AddDialogProps) => {
   const history = useHistory();
 
   const data = { ...stats, title };
-
-  console.log(data);
 
   const [isSaving, setIsSaving] = React.useState(false);
 
@@ -163,33 +135,7 @@ const AddDialog = ({ ...props }: AddDialogProps) => {
         onChange={(e) => setTitle(e.target.value)}
       />
       {stats ? (
-        <Card className={classes.card} square={true} variant="outlined">
-          <CardHeader title={title} />
-          {data.image && (
-            <CardMedia image={data.image} className={classes.media} />
-          )}
-          <CardContent className={classes.cardContent}>
-            <Typography variant="body2" gutterBottom={true}>
-              {data.description}
-            </Typography>
-            <Typography
-              variant="caption"
-              className={classes.sub}
-              color="textSecondary"
-            >
-              {/* <div className="sub"> */}
-              {data.icon && <img className={classes.icon} src={data.icon} />}
-              {data.url}
-              {data.minutes && (
-                <div className={classes.readTime}>
-                  {Math.ceil(data.minutes)}
-                  {' min'}
-                </div>
-              )}
-              {/* </div> */}
-            </Typography>
-          </CardContent>
-        </Card>
+        <ItemCard className={classes.card} item={data} />
       ) : (
         <CircularProgress className={classes.progress} />
       )}
