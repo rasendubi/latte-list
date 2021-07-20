@@ -1,20 +1,14 @@
 import React from 'react';
 
 import Dialog, { DialogProps } from '@material-ui/core/Dialog';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardMedia from '@material-ui/core/CardMedia';
-import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import {
   AppBar,
-  Backdrop,
   Button,
   CircularProgress,
   DialogActions,
   IconButton,
-  TextField,
   Toolbar,
   useMediaQuery,
   useTheme,
@@ -31,7 +25,7 @@ import { useUser } from '@/context/userContext';
 import { scheduleLater } from './lib/scheduling';
 import { Item } from './lib/Item';
 import ItemCard from './components/ItemCard';
-import { pinItem } from './lib/items';
+import { archiveItem, deleteItem, pinItem } from './lib/items';
 
 export interface ReviewDialogProps extends DialogProps {
   onClose?: () => void;
@@ -111,6 +105,14 @@ const ReviewDialog = ({ onClose, ...props }: ReviewDialogProps) => {
     item && pinItem(item);
   };
 
+  const handleDelete = () => {
+    item && deleteItem(item.ref);
+  };
+
+  const handleArchive = () => {
+    item && archiveItem(item.ref);
+  };
+
   const classes = useStyles();
 
   const theme = useTheme();
@@ -162,6 +164,7 @@ const ReviewDialog = ({ onClose, ...props }: ReviewDialogProps) => {
                 root: classes.iconButton,
                 label: classes.iconButtonLabel,
               }}
+              onClick={handleDelete}
             >
               <DeleteIcon />
               <Typography variant="caption">{'Delete'}</Typography>
@@ -172,6 +175,7 @@ const ReviewDialog = ({ onClose, ...props }: ReviewDialogProps) => {
                 root: classes.iconButton,
                 label: classes.iconButtonLabel,
               }}
+              onClick={handleArchive}
             >
               <DoneIcon />
               <Typography variant="caption">{'Archive'}</Typography>

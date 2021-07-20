@@ -17,7 +17,7 @@ import {
 } from '@material-ui/core';
 
 import firebase, { useStats } from '@/firebase/client';
-import { saveItem } from '@/lib/saveItem';
+import { saveItem } from '@/lib/items';
 import ItemCard from '@/components/ItemCard';
 
 export interface AddDialogProps extends DialogProps {}
