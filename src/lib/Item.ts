@@ -2,20 +2,32 @@ import firebase from 'firebase';
 
 import { SpacingParams } from '@/lib/spacing';
 
-export interface Item {
-  id: string;
+export interface ItemMeta {
+  /** canonical url */
   url: string;
-  title: string;
+  /** original url */
+  queryUrl: string;
+  title: string | null;
   description: string | null;
   image: string | null;
+  /** favicon */
+  icon: string | null;
   /** time to read the item in minutes */
   minutes: number | null;
   words: number | null;
-  icon: string | null;
+
+  queriedOn: firebase.firestore.Timestamp;
+}
+
+export interface Item {
+  url: string;
+  title: string | null;
+  meta: ItemMeta | null;
+
   /** number of times the item has been pinned */
   nPins: number;
 
-  spacingParams: SpacingParams;
+  spacingParams: SpacingParams | null;
 
   addedOn: firebase.firestore.Timestamp;
   scheduledOn: firebase.firestore.Timestamp | null;

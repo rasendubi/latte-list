@@ -13,7 +13,6 @@ export function PinIcon({
   unpin,
   ...props
 }: SvgIconProps & { unpin?: boolean }) {
-  console.log('unpin', unpin);
   return (
     <PushPin
       {...props}

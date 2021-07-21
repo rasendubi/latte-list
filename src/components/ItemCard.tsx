@@ -137,7 +137,7 @@ const ItemCard = ({
             >
               <CardHeader
                 className={classes.headerHorizontal}
-                title={item.title}
+                title={item.title ?? item.meta?.title}
                 subheader={
                   <>
                     <Typography
@@ -146,13 +146,13 @@ const ItemCard = ({
                       color="textSecondary"
                       gutterBottom={true}
                     >
-                      {item.icon && (
-                        <img className={classes.icon} src={item.icon} />
+                      {item.meta?.icon && (
+                        <img className={classes.icon} src={item.meta.icon} />
                       )}
                       {hostname}
-                      {item.minutes && (
+                      {item.meta?.minutes && (
                         <div className={classes.readTime}>
-                          {Math.ceil(item.minutes)}
+                          {Math.ceil(item.meta.minutes)}
                           {' min'}
                         </div>
                       )}
@@ -170,7 +170,7 @@ const ItemCard = ({
                   variant="body2"
                   className={classes.descriptionHorizontal}
                 >
-                  {item.description}
+                  {item.meta?.description}
                 </Typography>
               </CardContent>
             </CardActionArea>
@@ -202,7 +202,7 @@ const ItemCard = ({
               </CardActions>
             )}
           </div>
-          {item.image && (
+          {item.meta?.image && (
             <CardActionArea
               component="a"
               href={item.url}
@@ -211,7 +211,7 @@ const ItemCard = ({
               className={classes.mediaActionAreaHorizontal}
             >
               <CardMedia
-                image={item.image}
+                image={item.meta?.image}
                 className={classes.mediaHorizontal}
               />
             </CardActionArea>
@@ -225,30 +225,32 @@ const ItemCard = ({
           rel="noopener"
         >
           <CardHeader
-            title={item.title}
+            title={item.title ?? item.meta?.title}
             subheader={
               <Typography
                 variant="caption"
                 className={classes.sub}
                 color="textSecondary"
               >
-                {item.icon && <img className={classes.icon} src={item.icon} />}
+                {item.meta?.icon && (
+                  <img className={classes.icon} src={item.meta.icon} />
+                )}
                 {hostname}
-                {item.minutes && (
+                {item.meta?.minutes && (
                   <div className={classes.readTime}>
-                    {Math.ceil(item.minutes)}
+                    {Math.ceil(item.meta.minutes)}
                     {' min'}
                   </div>
                 )}
               </Typography>
             }
           />
-          {item.image && (
-            <CardMedia image={item.image} className={classes.media} />
+          {item.meta?.image && (
+            <CardMedia image={item.meta.image} className={classes.media} />
           )}
           <CardContent className={classes.cardContent}>
             <Typography variant="body2" gutterBottom={true}>
-              {item.description}
+              {item.meta?.description}
             </Typography>
           </CardContent>
         </CardActionArea>

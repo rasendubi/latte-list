@@ -1,3 +1,4 @@
+import { ItemMeta } from '@/lib/Item';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
@@ -52,7 +53,7 @@ export const fetchStats = (url: string) =>
     .httpsCallable('fetch')({ url })
     .then(({ data }) => data);
 
-export const useStats = (url: string | null | undefined) => {
+export const useStats = (url: string | null | undefined): ItemMeta | null => {
   const [stats, setStats] = React.useState<any | null>(null);
   // to ensure we’re not overwriting stats when getting old results
   const i = React.useRef(0);

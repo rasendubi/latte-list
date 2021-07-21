@@ -23,7 +23,7 @@ export interface SpacingResult {
 
 export function space(item: Item, params: SpacingParams) {
   const baseIncrement = fibonacci(params.n);
-  const ratio = timeToReadRatio(item.minutes) * pinRatio(item.nPins);
+  const ratio = timeToReadRatio(item.meta?.minutes) * pinRatio(item.nPins);
   const jitter = 0.9 + 0.2 * Math.random(); // [0.9, 1.1)
   const increment = baseIncrement * ratio * jitter;
   return { increment, params: { ...params, n: params.n + 1 } };
@@ -45,8 +45,8 @@ function pinRatio(nPins: number): number {
 //
 // TODO: hypothesis: if short item is not read after N reminders, it
 // likely will never be and we can deprioritize them.
-function timeToReadRatio(minutes: number | null): number {
-  if (minutes === null) {
+function timeToReadRatio(minutes: number | null | undefined): number {
+  if (!minutes) {
     minutes = 10;
   }
 

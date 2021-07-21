@@ -19,6 +19,7 @@ import {
 import firebase, { useStats } from '@/firebase/client';
 import { saveItem } from '@/lib/items';
 import ItemCard from '@/components/ItemCard';
+import { Item } from '@/lib/Item';
 
 export interface AddDialogProps extends DialogProps {}
 
@@ -54,7 +55,7 @@ const useStyles = makeStyles((theme) =>
 const AddDialog = ({ ...props }: AddDialogProps) => {
   const classes = useStyles();
 
-  const [title, setTitle] = React.useState('');
+  const [title, setTitle] = React.useState<string | null>(null);
   const [url, setUrl] = React.useState<string | null | undefined>(undefined);
 
   // TODO: this should be extracted to outside
@@ -62,38 +63,41 @@ const AddDialog = ({ ...props }: AddDialogProps) => {
     const u = new URL(window.location.toString());
     const title = u.searchParams.get('title');
     const text = u.searchParams.get('text');
+    const surl = u.searchParams.get('url');
+
     const url =
-      u.searchParams.get('url') ||
+      surl ||
       findUrlIn(text ?? '') ||
       // not sure if any app sends it in title?
       findUrlIn(title ?? '');
 
-    setTitle(title || url || '');
+    if (title && (text || surl)) {
+      setTitle(title);
+    }
     setUrl(url);
   }, []);
 
-  const stats = useStats(url);
-  // use useLayoutEffect because changing title causes a re-render
-  React.useLayoutEffect(() => {
-    if (!stats) return;
+  const meta = useStats(url);
 
-    setUrl((prevUrl) => (prevUrl === stats.queryUrl ? stats.url : prevUrl));
-    setTitle((prevTitle) =>
-      !prevTitle || prevTitle === stats.queryUrl ? stats.title : prevTitle
-    );
-  }, [stats]);
+  const item: Item = {
+    url: meta?.url || url || '',
+    title: title || meta?.title || meta?.url || url || '',
+    meta,
+    nPins: 0,
+    spacingParams: null,
+    addedOn: firebase.firestore.Timestamp.now(),
+    scheduledOn: null,
+    archivedOn: null,
+    pinnedOn: null,
+  };
 
   const history = useHistory();
-
-  const data = { ...stats, title };
-
   const [isSaving, setIsSaving] = React.useState(false);
-
   const handleSaveClick = async () => {
     const user = firebase.auth().currentUser;
     setIsSaving(true);
     if (user) {
-      await saveItem(user.uid, data);
+      await saveItem(user.uid, item);
     }
     history.replace('/');
   };
@@ -133,11 +137,11 @@ const AddDialog = ({ ...props }: AddDialogProps) => {
         margin="normal"
         name="title"
         label="Title"
-        value={title}
+        value={title ?? meta?.title ?? meta?.url ?? url}
         onChange={(e) => setTitle(e.target.value)}
       />
-      {stats ? (
-        <ItemCard variant="outlined" className={classes.card} item={data} />
+      {meta ? (
+        <ItemCard variant="outlined" className={classes.card} item={item} />
       ) : (
         <CircularProgress className={classes.progress} />
       )}
