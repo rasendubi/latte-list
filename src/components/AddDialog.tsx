@@ -45,6 +45,8 @@ const useStyles = makeStyles((theme) =>
       marginTop: theme.spacing(2),
       marginLeft: theme.spacing(1),
       marginRight: theme.spacing(1),
+      maxWidth: 600,
+      alignSelf: 'center',
     },
   })
 );
@@ -135,7 +137,7 @@ const AddDialog = ({ ...props }: AddDialogProps) => {
         onChange={(e) => setTitle(e.target.value)}
       />
       {stats ? (
-        <ItemCard className={classes.card} item={data} />
+        <ItemCard variant="outlined" className={classes.card} item={data} />
       ) : (
         <CircularProgress className={classes.progress} />
       )}

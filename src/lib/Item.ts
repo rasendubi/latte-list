@@ -20,4 +20,5 @@ export interface Item {
   addedOn: firebase.firestore.Timestamp;
   scheduledOn: firebase.firestore.Timestamp | null;
   pinnedOn: firebase.firestore.Timestamp | null;
+  archivedOn: firebase.firestore.Timestamp | null;
 }

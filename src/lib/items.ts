@@ -2,20 +2,6 @@ import firebase from '@/firebase/client';
 import { Item } from './Item';
 import { getScheduleLaterUpdate, getSchedulePinUpdate } from './scheduling';
 
-export function pinItem(item: firebase.firestore.DocumentSnapshot<Item>) {
-  item.ref.update({
-    pinnedOn: firebase.firestore.Timestamp.now(),
-    ...getSchedulePinUpdate(),
-  });
-}
-
-export function unpinItem(item: firebase.firestore.DocumentSnapshot<Item>) {
-  item.ref.update({
-    pinnedOn: null,
-    ...getScheduleLaterUpdate(item.data()!),
-  });
-}
-
 export async function saveItem(uid: string, item: any) {
   const items = firebase
     .firestore()
@@ -38,10 +24,19 @@ export async function saveItem(uid: string, item: any) {
   }
 }
 
-export async function deleteItem(
-  itemRef: firebase.firestore.DocumentReference<Item>
-) {
-  await itemRef.delete();
+export function pinItem(item: firebase.firestore.DocumentSnapshot<Item>) {
+  item.ref.update({
+    pinnedOn: firebase.firestore.Timestamp.now(),
+    archivedOn: null,
+    ...getSchedulePinUpdate(),
+  });
+}
+
+export function unpinItem(item: firebase.firestore.DocumentSnapshot<Item>) {
+  item.ref.update({
+    pinnedOn: null,
+    ...getScheduleLaterUpdate(item.data()!),
+  });
 }
 
 export async function archiveItem(
@@ -53,4 +48,19 @@ export async function archiveItem(
     pinnedOn: null,
     spacingParams: null,
   });
+}
+
+export async function unarchiveItem(
+  item: firebase.firestore.QueryDocumentSnapshot<Item>
+) {
+  item.ref.update({
+    archivedOn: null,
+    ...getScheduleLaterUpdate(item.data()),
+  });
+}
+
+export async function deleteItem(
+  itemRef: firebase.firestore.DocumentReference<Item>
+) {
+  await itemRef.delete();
 }

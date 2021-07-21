@@ -1,13 +1,13 @@
 import React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
+import { Button, Typography } from '@material-ui/core';
+
 import firebase, { useCollection } from '@/firebase/client';
 import { useUser } from '@/context/userContext';
-
 import ItemsList from '@/components/ItemsList';
-import { scheduleLater } from '@/lib/scheduling';
 import { Item } from '@/lib/Item';
-import { Button } from '@material-ui/core';
+import { useReviewItem } from '@/lib/useReviewItem';
 
 export interface IndexProps {}
 
@@ -44,6 +44,8 @@ const Index = ({}: IndexProps) => {
     setUrl('');
   };
 
+  const { item: reviewItem, isLoading: isReviewLoading } = useReviewItem(5000);
+
   if (isLoading) {
     return null;
   }
@@ -57,14 +59,52 @@ const Index = ({}: IndexProps) => {
   }
 
   return (
-    <div>
+    <div
+      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+    >
       <div style={{ marginBottom: 16 }}>
         <input value={url} onChange={(e) => setUrl(e.target.value)} />
         <button onClick={addUrl}>{'Add'}</button>
-        <Button onClick={() => history.push('/review')}>{'Review'}</Button>
       </div>
-      {/* <pre>{JSON.stringify(bookmarks, null, 2)}</pre> */}
+      {pinned &&
+        !pinned.docs.length &&
+        (isReviewLoading ? null : (
+          <>
+            <Typography
+              style={{ margin: '64px 24px' }}
+              color="textSecondary"
+              align="center"
+            >
+              {reviewItem
+                ? 'No pinned items'
+                : 'No items to review. Bookmark more and come back later.'}
+            </Typography>
+            {reviewItem && (
+              <Button
+                // variant="outlined"
+                variant="contained"
+                color="primary"
+                disabled={!reviewItem}
+                onClick={() => history.push('/review')}
+              >
+                {'Review more'}
+              </Button>
+            )}
+          </>
+        ))}
       <ItemsList items={pinned?.docs ?? []} />
+      {/* {isReviewLoading ? null : reviewItem ? (
+        <Button
+          variant="outlined"
+          color="primary"
+          disabled={!reviewItem}
+          onClick={() => history.push('/review')}
+        >
+          {'Review more'}
+        </Button>
+      ) : (
+        <Typography variant="body2">{'No items to review'}</Typography>
+      )} */}
     </div>
   );
 };

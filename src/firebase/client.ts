@@ -79,15 +79,29 @@ export const useStats = (url: string | null | undefined) => {
   return stats;
 };
 
-export function useCollection<T>(query: firebase.firestore.Query<T> | null) {
+export type UseCollectionOptions = {
+  /**
+   * When query is updating, whether to return stale data from
+   * previous query.
+   */
+  showStale?: boolean;
+};
+
+export function useCollection<T>(
+  query: firebase.firestore.Query<T> | null,
+  { showStale = false }: UseCollectionOptions = {}
+) {
   const [result, setResult] =
     React.useState<firebase.firestore.QuerySnapshot<T> | null>(null);
   React.useEffect(() => {
-    setResult(null);
+    if (!showStale) {
+      setResult(null);
+    }
+
     if (!query) return;
     const unsubscribe = query.onSnapshot(setResult);
     return () => unsubscribe();
-  }, [query]);
+  }, [query, showStale]);
   return result;
 }
 

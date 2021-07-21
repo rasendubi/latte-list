@@ -10,20 +10,18 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { CardActions, IconButton } from '@material-ui/core';
 
-import ArchiveIcon from '@material-ui/icons/Done';
-import DeleteIcon from '@material-ui/icons/Delete';
-import UnpinIcon from '@material-ui/icons/Bookmark';
-import PinIcon from '@material-ui/icons/BookmarkBorder';
-
 import { Item } from '@/lib/Item';
+import { ArchiveIcon, DeleteIcon, PinIcon, UnarchiveIcon } from '@/lib/icons';
 
 export interface ItemCardProps extends CardProps {
   item: Item;
   layout?: 'default' | 'horizontal';
   withActions?: boolean;
   onArchive?: () => void;
-  onDelete?: () => void;
+  onUnarchive?: () => void;
   onPin?: () => void;
+  onUnpin?: () => void;
+  onDelete?: () => void;
 }
 
 const useStyles = makeStyles((theme) =>
@@ -112,8 +110,10 @@ const ItemCard = ({
   withActions,
   className,
   onArchive,
-  onDelete,
+  onUnarchive,
   onPin,
+  onUnpin,
+  onDelete,
   ...props
 }: ItemCardProps) => {
   const classes = useStyles();
@@ -121,7 +121,7 @@ const ItemCard = ({
   return (
     <Card
       square={true}
-      variant="outlined"
+      elevation={0}
       {...props}
       className={clsx(classes.root, className)}
     >
@@ -139,23 +139,25 @@ const ItemCard = ({
                 className={classes.headerHorizontal}
                 title={item.title}
                 subheader={
-                  <Typography
-                    variant="caption"
-                    className={classes.sub}
-                    color="textSecondary"
-                    gutterBottom={true}
-                  >
-                    {item.icon && (
-                      <img className={classes.icon} src={item.icon} />
-                    )}
-                    {hostname}
-                    {item.minutes && (
-                      <div className={classes.readTime}>
-                        {Math.ceil(item.minutes)}
-                        {' min'}
-                      </div>
-                    )}
-                  </Typography>
+                  <>
+                    <Typography
+                      variant="caption"
+                      className={classes.sub}
+                      color="textSecondary"
+                      gutterBottom={true}
+                    >
+                      {item.icon && (
+                        <img className={classes.icon} src={item.icon} />
+                      )}
+                      {hostname}
+                      {item.minutes && (
+                        <div className={classes.readTime}>
+                          {Math.ceil(item.minutes)}
+                          {' min'}
+                        </div>
+                      )}
+                    </Typography>
+                  </>
                 }
               />
               <CardContent
@@ -174,14 +176,28 @@ const ItemCard = ({
             </CardActionArea>
             {withActions && (
               <CardActions className={classes.cardActionsHorizontal}>
-                <IconButton size="small" onClick={onArchive}>
-                  <ArchiveIcon />
+                {item.archivedOn ? (
+                  <IconButton
+                    title="Unarchive"
+                    size="small"
+                    onClick={onUnarchive}
+                  >
+                    <UnarchiveIcon />
+                  </IconButton>
+                ) : (
+                  <IconButton title="Archive" size="small" onClick={onArchive}>
+                    <ArchiveIcon />
+                  </IconButton>
+                )}
+                <IconButton
+                  title={item.pinnedOn ? 'Unpin' : 'Pin'}
+                  size="small"
+                  onClick={item.pinnedOn ? onUnpin : onPin}
+                >
+                  <PinIcon unpin={!!item.pinnedOn} />
                 </IconButton>
-                <IconButton size="small" onClick={onDelete}>
+                <IconButton title="Delete" size="small" onClick={onDelete}>
                   <DeleteIcon />
-                </IconButton>
-                <IconButton size="small" onClick={onPin}>
-                  {item.pinnedOn ? <UnpinIcon /> : <PinIcon />}
                 </IconButton>
               </CardActions>
             )}

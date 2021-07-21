@@ -10,22 +10,19 @@ import {
   DialogActions,
   IconButton,
   Toolbar,
-  useMediaQuery,
-  useTheme,
 } from '@material-ui/core';
 
-import CloseIcon from '@material-ui/icons/Close';
-import DoneIcon from '@material-ui/icons/Done';
-import LaterIcon from '@material-ui/icons/WatchLater';
-import DeleteIcon from '@material-ui/icons/DeleteForever';
-import PinIcon from '@material-ui/icons/Bookmark';
-
-import firebase, { useCollection } from '@/firebase/client';
-import { useUser } from '@/context/userContext';
 import { scheduleLater } from './lib/scheduling';
-import { Item } from './lib/Item';
 import ItemCard from './components/ItemCard';
 import { archiveItem, deleteItem, pinItem } from './lib/items';
+import { useReviewItem } from './lib/useReviewItem';
+import {
+  CloseIcon,
+  ArchiveIcon,
+  LaterIcon,
+  DeleteIcon,
+  PinIcon,
+} from './lib/icons';
 
 export interface ReviewDialogProps extends DialogProps {
   onClose?: () => void;
@@ -44,12 +41,10 @@ const useStyles = makeStyles((theme) =>
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
+      alignItems: 'center',
       padding: theme.spacing(1),
-    },
-    card: {
-      marginTop: theme.spacing(2),
-      marginLeft: theme.spacing(1),
-      marginRight: theme.spacing(1),
+      maxWidth: 600,
+      alignSelf: 'center',
     },
     progress: {
       marginTop: theme.spacing(8),
@@ -75,51 +70,32 @@ const useStyles = makeStyles((theme) =>
 );
 
 const ReviewDialog = ({ onClose, ...props }: ReviewDialogProps) => {
-  const [now, setNow] = React.useState<Date | null>(null);
-  React.useEffect(() => {
-    setNow(new Date());
-  }, []);
-
-  const { user } = useUser();
-  const query = React.useMemo(
-    () =>
-      user &&
-      (firebase
-        .firestore()
-        .collection(`users/${user.uid}/items`)
-        .where('scheduledOn', '<', now)
-        .orderBy('scheduledOn')
-        .limit(1) as firebase.firestore.Query<Item>),
-    [user, now]
-  );
-
-  const reviewQueue = useCollection(query);
-
-  const item = reviewQueue?.docs[0];
+  const { item, isLoading } = useReviewItem();
 
   const handleLater = () => {
     item && scheduleLater(item);
   };
-
   const handlePin = () => {
     item && pinItem(item);
   };
-
   const handleDelete = () => {
     item && deleteItem(item.ref);
   };
-
   const handleArchive = () => {
     item && archiveItem(item.ref);
   };
 
   const classes = useStyles();
 
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  // auto-close when review is done
+  React.useLayoutEffect(() => {
+    if (!isLoading && !item) {
+      onClose?.();
+    }
+  }, [isLoading, item]);
 
   return (
-    <Dialog fullScreen={fullScreen} {...props}>
+    <Dialog {...props}>
       <AppBar className={classes.appBar} position="static" elevation={1}>
         <Toolbar>
           <IconButton edge="start" color="inherit" onClick={onClose}>
@@ -130,8 +106,8 @@ const ReviewDialog = ({ onClose, ...props }: ReviewDialogProps) => {
           </Typography>
         </Toolbar>
       </AppBar>
-      {!reviewQueue && <CircularProgress className={classes.progress} />}
-      {reviewQueue && reviewQueue.docs.length === 0 && (
+      {isLoading && <CircularProgress className={classes.progress} />}
+      {!isLoading && !item && (
         <div className={classes.doneWrapper}>
           <Typography variant="body1" paragraph={true}>
             {'That’s all for now'}
@@ -145,7 +121,7 @@ const ReviewDialog = ({ onClose, ...props }: ReviewDialogProps) => {
         <>
           <div className={classes.cardWrapper}>
             {/* specify key, so there is no flash of old images when item completely changes */}
-            <ItemCard key={item.id} item={item.data()} />
+            <ItemCard key={item.id} item={item.data()} variant="outlined" />
           </div>
           <DialogActions className={classes.buttonGroup}>
             <Button
@@ -178,7 +154,7 @@ const ReviewDialog = ({ onClose, ...props }: ReviewDialogProps) => {
               }}
               onClick={handleArchive}
             >
-              <DoneIcon />
+              <ArchiveIcon />
               <Typography variant="caption">{'Archive'}</Typography>
             </Button>
             <Button

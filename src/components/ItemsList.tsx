@@ -5,10 +5,16 @@ import firebase from '@/firebase/client';
 
 import { Item } from '@/lib/Item';
 import ItemCard from '@/components/ItemCard';
-import { archiveItem, deleteItem, pinItem, unpinItem } from '@/lib/items';
+import {
+  archiveItem,
+  deleteItem,
+  pinItem,
+  unarchiveItem,
+  unpinItem,
+} from '@/lib/items';
 
 export interface ItemsListProps {
-  items: firebase.firestore.DocumentSnapshot<Item>[];
+  items: firebase.firestore.QueryDocumentSnapshot<Item>[];
 }
 
 const ItemsList = ({ items, ...props }: ItemsListProps) => {
@@ -21,20 +27,11 @@ const ItemsList = ({ items, ...props }: ItemsListProps) => {
           layout="horizontal"
           withActions={true}
           style={{ margin: 8 }}
-          onArchive={() => {
-            archiveItem(i.ref);
-          }}
-          onDelete={() => {
-            deleteItem(i.ref);
-          }}
-          onPin={() => {
-            const pinned = i.data()?.pinnedOn;
-            if (pinned) {
-              unpinItem(i);
-            } else {
-              pinItem(i);
-            }
-          }}
+          onArchive={() => archiveItem(i.ref)}
+          onUnarchive={() => unarchiveItem(i)}
+          onDelete={() => deleteItem(i.ref)}
+          onPin={() => pinItem(i)}
+          onUnpin={() => unpinItem(i)}
         />
       ))}
     </div>

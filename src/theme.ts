@@ -22,7 +22,7 @@ const theme = createTheme({
       main: purple[800],
     },
     background: {
-      // default: '#fff',
+      default: grey[200],
     },
   },
   // overrides: {
