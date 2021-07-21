@@ -9,6 +9,13 @@ export function pinItem(item: firebase.firestore.DocumentSnapshot<Item>) {
   });
 }
 
+export function unpinItem(item: firebase.firestore.DocumentSnapshot<Item>) {
+  item.ref.update({
+    pinnedOn: null,
+    ...getScheduleLaterUpdate(item.data()!),
+  });
+}
+
 export async function saveItem(uid: string, item: any) {
   const items = firebase
     .firestore()
@@ -16,7 +23,7 @@ export async function saveItem(uid: string, item: any) {
     .doc(uid)
     .collection('items') as firebase.firestore.CollectionReference<Item>;
 
-  // TODO: is call might be blocking on poor connection…
+  // TODO: this call might be blocking on poor connection…
   const existing = (await items.where('url', '==', item.url).get()).docs[0];
   if (existing) {
     existing.ref.update(item);

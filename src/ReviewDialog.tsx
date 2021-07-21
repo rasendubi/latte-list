@@ -144,7 +144,8 @@ const ReviewDialog = ({ onClose, ...props }: ReviewDialogProps) => {
       {item && (
         <>
           <div className={classes.cardWrapper}>
-            <ItemCard item={item.data()} />
+            {/* specify key, so there is no flash of old images when item completely changes */}
+            <ItemCard key={item.id} item={item.data()} />
           </div>
           <DialogActions className={classes.buttonGroup}>
             <Button

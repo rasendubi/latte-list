@@ -60,7 +60,7 @@ const Index = ({}: IndexProps) => {
         <Button onClick={() => history.push('/review')}>{'Review'}</Button>
       </div>
       {/* <pre>{JSON.stringify(bookmarks, null, 2)}</pre> */}
-      <ItemsList items={pinned?.docs.map((d) => d.data()) ?? []} />
+      <ItemsList items={pinned?.docs ?? []} />
     </div>
   );
 };
