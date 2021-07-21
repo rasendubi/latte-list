@@ -1,7 +1,7 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 
-import firebase, { fetchStats, useCollection } from '@/firebase/client';
+import firebase, { useCollection } from '@/firebase/client';
 import { useUser } from '@/context/userContext';
 
 import ItemsList from '@/components/ItemsList';
@@ -12,6 +12,8 @@ import { Button } from '@material-ui/core';
 export interface IndexProps {}
 
 const Index = ({}: IndexProps) => {
+  const location = useLocation();
+
   const handleClick = async () => {
     const provider = new firebase.auth.GoogleAuthProvider();
     const result = await firebase.auth().signInWithPopup(provider);
@@ -19,16 +21,18 @@ const Index = ({}: IndexProps) => {
 
   const { user, isLoading } = useUser();
 
-  const pinnedQuery = React.useMemo(
-    () =>
-      user &&
-      (firebase
-        .firestore()
-        .collection(`users/${user.uid}/items`)
-        .where('pinnedOn', '!=', null)
-        .orderBy('pinnedOn') as firebase.firestore.Query<Item>),
-    [user]
-  );
+  const pinnedQuery = React.useMemo(() => {
+    if (!user) return null;
+    const base = firebase
+      .firestore()
+      .collection(
+        `users/${user.uid}/items`
+      ) as firebase.firestore.CollectionReference<Item>;
+
+    return location.pathname === '/all'
+      ? base.orderBy('addedOn')
+      : base.where('pinnedOn', '!=', null).orderBy('pinnedOn');
+  }, [user, location]);
   const pinned = useCollection(pinnedQuery);
 
   const [url, setUrl] = React.useState('');

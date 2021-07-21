@@ -114,7 +114,6 @@ const ItemCard = ({
   onArchive,
   onDelete,
   onPin,
-  onUnpin,
   ...props
 }: ItemCardProps) => {
   const classes = useStyles();
