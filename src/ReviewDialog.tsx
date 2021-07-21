@@ -12,9 +12,8 @@ import {
   Toolbar,
 } from '@material-ui/core';
 
-import { scheduleLater } from './lib/scheduling';
 import ItemCard from './components/ItemCard';
-import { archiveItem, deleteItem, pinItem } from './lib/items';
+import { archiveItem, deleteItem, pinItem, scheduleLater } from './lib/items';
 import { useReviewItem } from './lib/useReviewItem';
 import {
   CloseIcon,
@@ -73,16 +72,16 @@ const ReviewDialog = ({ onClose, ...props }: ReviewDialogProps) => {
   const { item, isLoading } = useReviewItem();
 
   const handleLater = () => {
-    item && scheduleLater(item);
+    item && scheduleLater(item, { review: true });
   };
   const handlePin = () => {
-    item && pinItem(item);
+    item && pinItem(item, { review: true });
   };
   const handleDelete = () => {
-    item && deleteItem(item.ref);
+    item && deleteItem(item, { review: true });
   };
   const handleArchive = () => {
-    item && archiveItem(item.ref);
+    item && archiveItem(item, { review: true });
   };
 
   const classes = useStyles();

@@ -1,8 +1,13 @@
 import firebase from '@/firebase/client';
+import { audit, AuditAction, AuditContext } from './audit';
 import { Item } from './Item';
 import { getScheduleLaterUpdate, getSchedulePinUpdate } from './scheduling';
 
-export async function saveItem(uid: string, item: any) {
+export async function saveItem(
+  uid: string,
+  item: any,
+  context: AuditContext = {}
+) {
   const items = firebase
     .firestore()
     .collection('users')
@@ -20,29 +25,48 @@ export async function saveItem(uid: string, item: any) {
       addedOn: firebase.firestore.Timestamp.now(),
     };
     data = { ...data, ...getScheduleLaterUpdate(data) };
-    items.doc().set(data);
+    const doc = items.doc();
+    doc.set(data);
+    audit(doc, 'add', context, null, data);
   }
 }
 
-export function pinItem(item: firebase.firestore.DocumentSnapshot<Item>) {
-  item.ref.update({
-    pinnedOn: firebase.firestore.Timestamp.now(),
-    archivedOn: null,
-    ...getSchedulePinUpdate(),
-  });
+export async function scheduleLater(
+  item: firebase.firestore.QueryDocumentSnapshot<Item>,
+  context: AuditContext = {}
+) {
+  updateWithAudit(item, 'later', context, (prev) =>
+    getScheduleLaterUpdate(prev)
+  );
 }
 
-export function unpinItem(item: firebase.firestore.DocumentSnapshot<Item>) {
-  item.ref.update({
+export function pinItem(
+  item: firebase.firestore.QueryDocumentSnapshot<Item>,
+  context: AuditContext = {}
+) {
+  updateWithAudit(item, 'pin', context, (prev) => ({
+    pinnedOn: firebase.firestore.Timestamp.now(),
+    archivedOn: null,
+    nPins: prev.nPins + 1,
+    ...getSchedulePinUpdate(),
+  }));
+}
+
+export function unpinItem(
+  item: firebase.firestore.QueryDocumentSnapshot<Item>,
+  context: AuditContext = {}
+) {
+  updateWithAudit(item, 'unpin', context, (prev) => ({
     pinnedOn: null,
-    ...getScheduleLaterUpdate(item.data()!),
-  });
+    ...getScheduleLaterUpdate(prev),
+  }));
 }
 
 export async function archiveItem(
-  item: firebase.firestore.DocumentReference<Item>
+  item: firebase.firestore.QueryDocumentSnapshot<Item>,
+  context: AuditContext = {}
 ) {
-  item.update({
+  updateWithAudit(item, 'archive', context, {
     archivedOn: firebase.firestore.Timestamp.now(),
     scheduledOn: null,
     pinnedOn: null,
@@ -51,16 +75,32 @@ export async function archiveItem(
 }
 
 export async function unarchiveItem(
-  item: firebase.firestore.QueryDocumentSnapshot<Item>
+  item: firebase.firestore.QueryDocumentSnapshot<Item>,
+  context: AuditContext = {}
 ) {
-  item.ref.update({
+  updateWithAudit(item, 'unarchive', context, (prev) => ({
     archivedOn: null,
-    ...getScheduleLaterUpdate(item.data()),
-  });
+    ...getScheduleLaterUpdate(prev),
+  }));
 }
 
 export async function deleteItem(
-  itemRef: firebase.firestore.DocumentReference<Item>
+  item: firebase.firestore.QueryDocumentSnapshot<Item>,
+  context: AuditContext = {}
 ) {
-  await itemRef.delete();
+  const prev = item.data();
+  item.ref.delete();
+  audit(item.ref, 'delete', context, prev, null);
+}
+
+function updateWithAudit(
+  item: firebase.firestore.QueryDocumentSnapshot<Item>,
+  action: AuditAction,
+  context: AuditContext,
+  update: Partial<Item> | ((item: Item) => Partial<Item>)
+) {
+  const prev = item.data();
+  item.ref.update(typeof update === 'function' ? update(prev) : update);
+  const next = { ...prev, ...update };
+  audit(item.ref, action, context, prev, next);
 }

@@ -8,6 +8,8 @@ import toString from 'hast-util-to-string';
 import toText from 'hast-util-to-text';
 import stringReadingTime from 'reading-time';
 
+const excludedDomains = new Set(['www.youtube.com', 'music.google.com']);
+
 // TODO: This function is too slow. The target for downloading page
 // and processing it is 1 second.
 //
@@ -62,7 +64,10 @@ export default functions
     const description = getDescription(hast);
     const image = getImage(hast);
     const icon = getIcon(hast, queryUrl);
-    const { minutes, words } = readingTime(selectMainContent(hast));
+    const { minutes, words } =
+      url && excludedDomains.has(new URL(url).hostname)
+        ? { minutes: null, words: null }
+        : readingTime(selectMainContent(hast));
     console.timeEnd('process');
 
     // TODO: the method above fails on pages that require JS to load the

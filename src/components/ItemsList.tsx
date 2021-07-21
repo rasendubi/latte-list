@@ -26,10 +26,10 @@ const ItemsList = ({ items, ...props }: ItemsListProps) => {
           item={i.data()!}
           layout="horizontal"
           withActions={true}
-          style={{ margin: 8 }}
-          onArchive={() => archiveItem(i.ref)}
+          style={{ margin: 8, maxWidth: 720 }}
+          onArchive={() => archiveItem(i)}
           onUnarchive={() => unarchiveItem(i)}
-          onDelete={() => deleteItem(i.ref)}
+          onDelete={() => deleteItem(i)}
           onPin={() => pinItem(i)}
           onUnpin={() => unpinItem(i)}
         />
