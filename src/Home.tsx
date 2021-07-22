@@ -55,11 +55,6 @@ const useStyles = makeStyles((theme) =>
 );
 
 const Index = ({}: IndexProps) => {
-  const handleClick = async () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    const result = await firebase.auth().signInWithPopup(provider);
-  };
-
   const { user } = useUser();
 
   const [filter, setFilter] = React.useState('pinned');

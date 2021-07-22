@@ -1,42 +1,25 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 
-import { useLocation, useHistory } from 'react-router-dom';
-
-import Home from '@/Home';
-import AddDialog from '@/components/AddDialog';
-import ReviewDialog from '@/ReviewDialog';
 import { useUser } from '@/context/userContext';
-import LoginScreen from './LoginScreen';
+
+const LoginScreen = React.lazy(() => import('./LoginScreen'));
+const SignedInApp = React.lazy(() => import('./SignedInApp'));
+
+// import LoginScreen from './LoginScreen';
+// import SignedInApp from './SignedInApp';
 
 export interface AppProps {}
 
 const App = ({}: AppProps) => {
-  const location = useLocation();
-  const history = useHistory();
-
   const { user, isLoading } = useUser();
   if (isLoading) {
     return null;
   }
 
-  if (!user) {
-    return <LoginScreen />;
-  }
-
   return (
-    <>
-      <Home />
-      {location.pathname === '/add' && (
-        <AddDialog fullScreen={true} open={true} />
-      )}
-      {location.pathname === '/review' && (
-        <ReviewDialog
-          fullScreen={true}
-          open={true}
-          onClose={() => history.replace('/')}
-        />
-      )}
-    </>
+    <Suspense fallback={null}>
+      {user ? <SignedInApp /> : <LoginScreen />}
+    </Suspense>
   );
 };
 

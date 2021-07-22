@@ -43,9 +43,9 @@ module.exports = {
     // Could be replicated via a vendors chunk
     splitChunks: {
       chunks: 'all',
-      name(_, __, cacheGroupKey) {
-        return cacheGroupKey;
-      },
+      // name(_, __, cacheGroupKey) {
+      //   return cacheGroupKey;
+      // },
     },
   },
   module: {
