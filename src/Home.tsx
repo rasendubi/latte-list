@@ -10,6 +10,7 @@ import {
   MenuItem,
   Paper,
   Select,
+  Snackbar,
   Typography,
 } from '@material-ui/core';
 import { AppBar, Toolbar } from '@material-ui/core';
@@ -19,8 +20,9 @@ import { useUser } from '@/context/userContext';
 import ItemsList from '@/components/ItemsList';
 import { Item } from '@/lib/Item';
 import { useReviewItem } from '@/lib/useReviewItem';
-import { AddIcon, LogoutIcon } from '@/lib/icons';
+import { AddIcon, CloseIcon, LogoutIcon } from '@/lib/icons';
 import { useInstallPrompt } from './context/installPrompt';
+import { useServiceWorker } from './context/serviceWorker';
 
 export interface IndexProps {}
 
@@ -67,6 +69,8 @@ const useStyles = makeStyles((theme) =>
 
 const Index = ({}: IndexProps) => {
   const installPrompt = useInstallPrompt();
+  const { newServiceWorkerAvailable, skipWaiting } = useServiceWorker();
+  const [updateDismissed, setUpdateDismissed] = React.useState(false);
 
   const { user } = useUser();
 
@@ -180,6 +184,29 @@ const Index = ({}: IndexProps) => {
         >
           <AddIcon />
         </Fab>
+        <Snackbar
+          open={newServiceWorkerAvailable}
+          message="New release is available"
+          action={
+            <>
+              <Button
+                disableElevation={true}
+                variant="contained"
+                color="secondary"
+                size="small"
+                onClick={skipWaiting}
+              >
+                {'Update'}
+              </Button>
+              <IconButton
+                color="inherit"
+                onClick={() => setUpdateDismissed(true)}
+              >
+                <CloseIcon />
+              </IconButton>
+            </>
+          }
+        />
       </div>
     </>
   );

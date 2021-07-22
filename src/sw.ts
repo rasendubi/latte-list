@@ -9,10 +9,17 @@ import { NavigationRoute } from 'workbox-routing/NavigationRoute';
 import { registerRoute } from 'workbox-routing/registerRoute';
 
 declare global {
-  interface Window {
+  interface ServiceWorkerGlobalScope {
     __WB_MANIFEST: any;
   }
 }
+declare const self: ServiceWorkerGlobalScope;
+
+self.addEventListener('message', (event) => {
+  if (event.data.action === 'skipWaiting') {
+    self.skipWaiting();
+  }
+});
 
 precacheAndRoute(self.__WB_MANIFEST);
 
