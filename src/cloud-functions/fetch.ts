@@ -34,7 +34,7 @@ export default functions
   .runWith({
     maxInstances: 1,
     timeoutSeconds: 20,
-    memory: '128MB',
+    memory: '512MB',
   })
   .https.onCall(async (data, context) => {
     if (!context.auth) {
