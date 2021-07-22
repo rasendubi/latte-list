@@ -5,13 +5,16 @@ import { useUser } from '@/context/userContext';
 import { Item } from '@/lib/Item';
 
 export function useReviewItem(updatePeriod?: number) {
-  const [now, setNow] = React.useState<Date | null>(null);
+  // TODO: optimize me! we know exactly when the next item becomes
+  // ready for review—schedule the timer at that time instead of
+  // updating it every second.
+  const [now, setNow] = React.useState<Date>(new Date());
   React.useEffect(() => {
     const updateNow = () => setNow(new Date());
     updateNow();
 
     if (updatePeriod) {
-      const id = setInterval(updateNow, 5000);
+      const id = setInterval(updateNow, 1000);
       return () => clearInterval(id);
     }
   }, [updatePeriod]);
@@ -20,21 +23,25 @@ export function useReviewItem(updatePeriod?: number) {
 
   const query = React.useMemo(
     () =>
-      now &&
       user &&
       (firebase
         .firestore()
         .collection(`users/${user.uid}/items`)
-        .where('scheduledOn', '<', now)
         .orderBy('scheduledOn')
         .limit(1) as firebase.firestore.Query<Item>),
-    [user, now]
+    [user]
   );
 
   const reviewQueue = useCollection(query, { showStale: true });
 
+  const isLoading = isUserLoading || !reviewQueue;
+  const item = reviewQueue?.docs.filter((d) => {
+    const scheduledOn = d.data().scheduledOn;
+    return scheduledOn && scheduledOn.toDate().getTime() < now.getTime();
+  })[0];
+
   return {
-    isLoading: isUserLoading || !reviewQueue,
-    item: reviewQueue?.docs[0],
+    isLoading,
+    item,
   };
 }
