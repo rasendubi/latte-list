@@ -5,18 +5,20 @@ import {
   Button,
   createStyles,
   Fab,
+  IconButton,
   makeStyles,
   MenuItem,
   Select,
   Typography,
 } from '@material-ui/core';
+import { AppBar, Toolbar } from '@material-ui/core';
 
 import firebase, { useCollection } from '@/firebase/client';
 import { useUser } from '@/context/userContext';
 import ItemsList from '@/components/ItemsList';
 import { Item } from '@/lib/Item';
 import { useReviewItem } from '@/lib/useReviewItem';
-import { AddIcon } from '@/lib/icons';
+import { AddIcon, LogoutIcon } from '@/lib/icons';
 
 export interface IndexProps {}
 
@@ -58,7 +60,7 @@ const Index = ({}: IndexProps) => {
     const result = await firebase.auth().signInWithPopup(provider);
   };
 
-  const { user, isLoading } = useUser();
+  const { user } = useUser();
 
   const [filter, setFilter] = React.useState('pinned');
 
@@ -76,76 +78,86 @@ const Index = ({}: IndexProps) => {
   }, [user, filter]);
   const pinned = useCollection(pinnedQuery);
 
-  const [url, setUrl] = React.useState('');
-
   const history = useHistory();
 
   const { item: reviewItem, isLoading: isReviewLoading } = useReviewItem(5000);
 
   const classes = useStyles();
 
-  if (isLoading) {
-    return null;
-  }
-
-  if (!user) {
-    return (
-      <div>
-        <button onClick={handleClick}>{'Sign in'}</button>
-      </div>
-    );
-  }
-
   return (
-    <div className={classes.root}>
-      <div className={classes.captionLine}>
-        <Typography variant="subtitle2">{'Items'}</Typography>
-        <Select
-          // native={true}
-          className={classes.filterSelect}
-          disableUnderline={true}
-          value={filter}
-          onChange={(e) => setFilter(e.target.value as string)}
-        >
-          <MenuItem value={'all'}>{'All'}</MenuItem>
-          <MenuItem value={'pinned'}>{'Pinned'}</MenuItem>
-        </Select>
-      </div>
-      {pinned &&
-        !pinned.docs.length &&
-        (isReviewLoading ? null : (
-          <>
-            <Typography
-              style={{ margin: '64px 24px' }}
-              color="textSecondary"
-              align="center"
+    <>
+      <AppBar position="sticky">
+        <Toolbar>
+          <Typography style={{ flexGrow: 1 }}>{'Home'}</Typography>
+          {reviewItem && (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => history.push('/review')}
             >
-              {reviewItem
-                ? 'No pinned items'
-                : 'No items to review. Bookmark more and come back later.'}
-            </Typography>
-            {reviewItem && (
-              <Button
-                // variant="outlined"
-                variant="contained"
-                color="primary"
-                disabled={!reviewItem}
-                onClick={() => history.push('/review')}
+              {'Review'}
+            </Button>
+          )}
+          <IconButton
+            color="inherit"
+            edge="end"
+            style={{ marginLeft: 8 }}
+            onClick={() => firebase.auth().signOut()}
+          >
+            <LogoutIcon />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+      <div className={classes.root}>
+        <div className={classes.captionLine}>
+          <Typography variant="subtitle2">{'Items'}</Typography>
+          <Select
+            // native={true}
+            className={classes.filterSelect}
+            disableUnderline={true}
+            value={filter}
+            onChange={(e) => setFilter(e.target.value as string)}
+          >
+            <MenuItem value={'all'}>{'All'}</MenuItem>
+            <MenuItem value={'pinned'}>{'Pinned'}</MenuItem>
+          </Select>
+        </div>
+        {pinned &&
+          !pinned.docs.length &&
+          (isReviewLoading ? null : (
+            <>
+              <Typography
+                style={{ margin: '64px 24px' }}
+                color="textSecondary"
+                align="center"
               >
-                {'Review more'}
-              </Button>
-            )}
-          </>
-        ))}
-      <ItemsList className={classes.itemsList} items={pinned?.docs ?? []} />
-      <Fab
-        className={classes.addButton}
-        color="secondary"
-        onClick={() => history.push('/add')}
-      >
-        <AddIcon />
-      </Fab>
-    </div>
+                {reviewItem
+                  ? 'No pinned items'
+                  : 'No items to review. Bookmark more and come back later.'}
+              </Typography>
+              {reviewItem && (
+                <Button
+                  // variant="outlined"
+                  variant="contained"
+                  color="primary"
+                  disabled={!reviewItem}
+                  onClick={() => history.push('/review')}
+                >
+                  {'Review more'}
+                </Button>
+              )}
+            </>
+          ))}
+        <ItemsList className={classes.itemsList} items={pinned?.docs ?? []} />
+        <Fab
+          className={classes.addButton}
+          color="secondary"
+          onClick={() => history.push('/add')}
+        >
+          <AddIcon />
+        </Fab>
+      </div>
+    </>
   );
 };
 

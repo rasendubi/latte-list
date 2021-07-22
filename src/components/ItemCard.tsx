@@ -66,7 +66,9 @@ const useStyles = makeStyles((theme) =>
       '-webkit-box-orient': 'vertical',
       overflow: 'hidden',
     },
-    sub: {},
+    sub: {
+      display: 'inline-flex',
+    },
     icon: {
       height: '1em',
       marginRight: '0.7ch',

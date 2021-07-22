@@ -9,6 +9,7 @@ export { default as DeleteIcon } from '@material-ui/icons/DeleteSharp';
 export { default as LaterIcon } from '@material-ui/icons/WatchLater';
 export { default as CloseIcon } from '@material-ui/icons/Close';
 export { default as AddIcon } from '@material-ui/icons/Add';
+export { default as LogoutIcon } from '@material-ui/icons/Logout';
 
 export function PinIcon({
   unpin,
