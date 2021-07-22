@@ -6,6 +6,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 
 import UserProvider from '@/context/userContext';
 import theme from '@/theme';
+import { InstallPromptProvider } from './context/installPrompt';
 
 export interface WrapperProps {
   children: React.ReactNode;
@@ -13,12 +14,14 @@ export interface WrapperProps {
 
 const Wrapper = ({ children }: WrapperProps) => {
   return (
-    <UserProvider>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <BrowserRouter>{children}</BrowserRouter>
-      </ThemeProvider>
-    </UserProvider>
+    <InstallPromptProvider>
+      <UserProvider>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <BrowserRouter>{children}</BrowserRouter>
+        </ThemeProvider>
+      </UserProvider>
+    </InstallPromptProvider>
   );
 };
 

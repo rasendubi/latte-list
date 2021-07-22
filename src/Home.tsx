@@ -8,6 +8,7 @@ import {
   IconButton,
   makeStyles,
   MenuItem,
+  Paper,
   Select,
   Typography,
 } from '@material-ui/core';
@@ -19,6 +20,7 @@ import ItemsList from '@/components/ItemsList';
 import { Item } from '@/lib/Item';
 import { useReviewItem } from '@/lib/useReviewItem';
 import { AddIcon, LogoutIcon } from '@/lib/icons';
+import { useInstallPrompt } from './context/installPrompt';
 
 export interface IndexProps {}
 
@@ -31,6 +33,15 @@ const useStyles = makeStyles((theme) =>
       maxWidth: 720,
       margin: '0 auto',
       padding: 8,
+    },
+    installPaper: {
+      padding: 8,
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    installButton: {
+      marginLeft: 8,
     },
     captionLine: {
       display: 'flex',
@@ -55,6 +66,8 @@ const useStyles = makeStyles((theme) =>
 );
 
 const Index = ({}: IndexProps) => {
+  const installPrompt = useInstallPrompt();
+
   const { user } = useUser();
 
   const [filter, setFilter] = React.useState('pinned');
@@ -103,6 +116,22 @@ const Index = ({}: IndexProps) => {
           </IconButton>
         </Toolbar>
       </AppBar>
+      {'share' in navigator && installPrompt && (
+        <Paper className={classes.installPaper} elevation={2} square={true}>
+          <Typography variant="subtitle2">
+            {'Install app to save items by sharing'}
+          </Typography>
+          <Button
+            className={classes.installButton}
+            disableElevation={true}
+            color="secondary"
+            variant="contained"
+            onClick={() => installPrompt()}
+          >
+            {'Install'}
+          </Button>
+        </Paper>
+      )}
       <div className={classes.root}>
         <div className={classes.captionLine}>
           <Typography variant="subtitle2">{'Items'}</Typography>
