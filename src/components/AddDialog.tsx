@@ -16,10 +16,11 @@ import {
   Toolbar,
 } from '@material-ui/core';
 
-import firebase, { useStats } from '@/firebase/client';
+import firebase, { useMeta } from '@/firebase/client';
 import { saveItem } from '@/lib/items';
 import ItemCard from '@/components/ItemCard';
 import { Item } from '@/lib/Item';
+import { useDebounce } from 'react-use';
 
 export interface AddDialogProps extends DialogProps {}
 
@@ -77,7 +78,10 @@ const AddDialog = ({ ...props }: AddDialogProps) => {
     setUrl(url);
   }, []);
 
-  const meta = useStats(url);
+  const [debouncedUrl, setDebouncedUrl] = React.useState(url);
+  useDebounce(() => setDebouncedUrl(url), 500, [url]);
+  const { meta, isLoading: metaIsLoading } = useMeta(debouncedUrl);
+  const isLoading = metaIsLoading || url !== debouncedUrl;
 
   const item: Item = {
     url: meta?.url || url || '',
@@ -102,14 +106,6 @@ const AddDialog = ({ ...props }: AddDialogProps) => {
     history.replace('/');
   };
 
-  if (url === null) {
-    // TODO: close or warn? or allow adding just title
-  }
-  if (!url) {
-    return null;
-  }
-
-  // TODO: allow editing URL?
   return (
     <Dialog {...props}>
       <Backdrop open={isSaving} className={classes.backdrop}>
@@ -134,16 +130,24 @@ const AddDialog = ({ ...props }: AddDialogProps) => {
       </AppBar>
       <TextField
         className={classes.input}
-        margin="normal"
+        margin="dense"
+        name="url"
+        label="URL"
+        value={url ?? ''}
+        onChange={(e) => setUrl(e.target.value)}
+      />
+      <TextField
+        className={classes.input}
+        margin="dense"
         name="title"
         label="Title"
-        value={title ?? meta?.title ?? meta?.url ?? url}
+        value={title ?? meta?.title ?? ''}
         onChange={(e) => setTitle(e.target.value)}
       />
       {meta ? (
         <ItemCard variant="outlined" className={classes.card} item={item} />
       ) : (
-        <CircularProgress className={classes.progress} />
+        isLoading && <CircularProgress className={classes.progress} />
       )}
     </Dialog>
   );

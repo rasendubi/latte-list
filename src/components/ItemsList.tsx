@@ -15,11 +15,12 @@ import {
 
 export interface ItemsListProps {
   items: firebase.firestore.QueryDocumentSnapshot<Item>[];
+  className?: string;
 }
 
-const ItemsList = ({ items, ...props }: ItemsListProps) => {
+const ItemsList = ({ className, items, ...props }: ItemsListProps) => {
   return (
-    <div>
+    <div className={className}>
       {items.map((i) => (
         <ItemCard
           key={i.id}

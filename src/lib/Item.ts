@@ -1,4 +1,4 @@
-import firebase from 'firebase';
+import type firebase from 'firebase';
 
 import { SpacingParams } from '@/lib/spacing';
 

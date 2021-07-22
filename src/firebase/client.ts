@@ -53,31 +53,48 @@ export const fetchStats = (url: string) =>
     .httpsCallable('fetch')({ url })
     .then(({ data }) => data);
 
-export const useStats = (url: string | null | undefined): ItemMeta | null => {
-  const [stats, setStats] = React.useState<any | null>(null);
-  // to ensure we’re not overwriting stats when getting old results
+export const useMeta = (
+  url: string | null | undefined
+): { meta: ItemMeta | null; isLoading: boolean } => {
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [meta, setMeta] = React.useState<any | null>(null);
+
+  // to ensure we’re not overwriting meta when getting old results
   const i = React.useRef(0);
   React.useEffect(() => {
-    if (stats?.url === url) {
-      return;
-    }
-    setStats(null);
-    // TODO: check if `url` is a valid URL
-    if (!url) {
+    if (meta?.url === url) {
       return;
     }
 
+    setMeta(null);
+    if (!url) {
+      setIsLoading(false);
+      return;
+    }
+    try {
+      new URL(url);
+    } catch {
+      setIsLoading(false);
+      return;
+    }
+    // if (!url) {
+    //   setIsLoading(false);
+    //   return;
+    // }
+
+    setIsLoading(true);
     i.current++;
     const me = i.current;
     fetchStats(url).then((data) => {
       if (me === i.current) {
-        setStats(data);
+        setMeta(data);
+        setIsLoading(false);
       }
     });
     // TODO: handle error / isLoading
   }, [url]);
 
-  return stats;
+  return { meta, isLoading };
 };
 
 export type UseCollectionOptions = {

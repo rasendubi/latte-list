@@ -1,9 +1,10 @@
-import firebase from 'firebase';
+import firebase from '@/firebase/client';
 import { Item } from './Item';
+import { getHostname } from './items';
 import { SpacingParams } from './spacing';
 
 interface ItemAuditCommonFields {
-  hostname: string;
+  hostname: string | null;
   minutes: number | null;
   nPins: number;
   spacingParams: SpacingParams | null;
@@ -68,38 +69,7 @@ function extractItemAuditCommonFields({
     scheduledOn,
     pinnedOn,
     archivedOn,
-    hostname: new URL(url).hostname,
+    hostname: getHostname(url),
     minutes: item.meta?.minutes ?? null,
   };
 }
-
-// added:
-// - minutes
-// - hostname?
-// - nextScheduledOn
-// later
-// - nPins
-// - scheduledOn
-// - nextScheduledOn
-// - spacingParams
-// pin
-// - prevScheduledOn
-// - nPins
-// delete
-// - scheduledOn
-// - pinnedOn
-// - nPins
-// archive
-// - scheduledOn
-// - pinnedOn
-// - nPins
-
-// - nPins
-// - scheduledOn
-// - pinnedOn
-// - archivedOn
-// - spacingParams
-// - meta.minutes
-// - meta.hostname
-// - (nextScheduledOn)
-// - (nextSpacingParams)

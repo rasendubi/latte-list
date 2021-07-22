@@ -59,13 +59,13 @@ export default functions
 
     console.time('process');
     const hast = unified().use(parse).parse(body);
-    const url = getCanonicalUrl(queryUrl, hast);
+    const url = getCanonicalUrl(response.url || queryUrl, hast);
     const title = getTitle(hast) || url;
     const description = getDescription(hast);
     const image = getImage(hast);
-    const icon = getIcon(hast, queryUrl);
+    const icon = getIcon(hast, response.url || queryUrl);
     const { minutes, words } =
-      url && excludedDomains.has(new URL(url).hostname)
+      url && excludedDomains.has(new URL(response.url || queryUrl).hostname)
         ? { minutes: null, words: null }
         : readingTime(selectMainContent(hast));
     console.timeEnd('process');

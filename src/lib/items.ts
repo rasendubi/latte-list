@@ -16,7 +16,7 @@ export async function saveItem(
 
   // TODO: this call might be blocking on poor connection…
   const existing = (await items.where('url', '==', item.url).get()).docs[0];
-  if (existing) {
+  if (item.url && existing) {
     existing.ref.update(item);
   } else {
     let data: Item = {
@@ -103,4 +103,13 @@ function updateWithAudit(
   item.ref.update(typeof update === 'function' ? update(prev) : update);
   const next = { ...prev, ...update };
   audit(item.ref, action, context, prev, next);
+}
+
+export function getHostname(url: string) {
+  try {
+    const u = new URL(url);
+    return u.hostname;
+  } catch (e) {
+    return null;
+  }
 }

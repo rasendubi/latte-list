@@ -1,4 +1,4 @@
-import firebase from 'firebase';
+import firebase from '@/firebase/client';
 
 import { Item } from '@/lib/Item';
 import { initialParams, space } from './spacing';

@@ -12,6 +12,7 @@ import { CardActions, IconButton } from '@material-ui/core';
 
 import { Item } from '@/lib/Item';
 import { ArchiveIcon, DeleteIcon, PinIcon, UnarchiveIcon } from '@/lib/icons';
+import { getHostname } from '@/lib/items';
 
 export interface ItemCardProps extends CardProps {
   item: Item;
@@ -76,6 +77,7 @@ const useStyles = makeStyles((theme) =>
         margin: '0 0.5ch',
         content: '"·"',
       },
+      display: 'inline-block',
       whiteSpace: 'nowrap',
     },
     media: {
@@ -115,7 +117,7 @@ const ItemCard = ({
   ...props
 }: ItemCardProps) => {
   const classes = useStyles();
-  const hostname = new URL(item.url).hostname.replace(/^www\./, '');
+  const hostname = getHostname(item.url)?.replace(/^www\./, '');
   return (
     <Card
       square={true}
@@ -251,11 +253,13 @@ const ItemCard = ({
           {item.meta?.image && (
             <CardMedia image={item.meta.image} className={classes.media} />
           )}
-          <CardContent className={classes.cardContent}>
-            <Typography variant="body2" gutterBottom={true}>
-              {item.meta?.description}
-            </Typography>
-          </CardContent>
+          {item.meta?.description && (
+            <CardContent className={classes.cardContent}>
+              <Typography variant="body2" gutterBottom={true}>
+                {item.meta?.description}
+              </Typography>
+            </CardContent>
+          )}
         </CardActionArea>
       )}
     </Card>

@@ -1,9 +1,10 @@
 import React from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import {
   Button,
   createStyles,
+  Fab,
   makeStyles,
   MenuItem,
   Select,
@@ -15,6 +16,7 @@ import { useUser } from '@/context/userContext';
 import ItemsList from '@/components/ItemsList';
 import { Item } from '@/lib/Item';
 import { useReviewItem } from '@/lib/useReviewItem';
+import { AddIcon } from '@/lib/icons';
 
 export interface IndexProps {}
 
@@ -38,6 +40,14 @@ const useStyles = makeStyles((theme) =>
     },
     filterSelect: {
       fontSize: theme.typography.caption.fontSize,
+    },
+    itemsList: {
+      alignSelf: 'stretch',
+    },
+    addButton: {
+      position: 'absolute',
+      right: 16,
+      bottom: 16,
     },
   })
 );
@@ -70,11 +80,6 @@ const Index = ({}: IndexProps) => {
 
   const history = useHistory();
 
-  const addUrl = async () => {
-    history.push(`/add?url=${encodeURIComponent(url)}`);
-    setUrl('');
-  };
-
   const { item: reviewItem, isLoading: isReviewLoading } = useReviewItem(5000);
 
   const classes = useStyles();
@@ -106,10 +111,6 @@ const Index = ({}: IndexProps) => {
           <MenuItem value={'pinned'}>{'Pinned'}</MenuItem>
         </Select>
       </div>
-      {/* <div style={{ marginBottom: 16 }}>
-        <input value={url} onChange={(e) => setUrl(e.target.value)} />
-        <button onClick={addUrl}>{'Add'}</button>
-      </div> */}
       {pinned &&
         !pinned.docs.length &&
         (isReviewLoading ? null : (
@@ -136,19 +137,14 @@ const Index = ({}: IndexProps) => {
             )}
           </>
         ))}
-      <ItemsList items={pinned?.docs ?? []} />
-      {/* {isReviewLoading ? null : reviewItem ? (
-        <Button
-          variant="outlined"
-          color="primary"
-          disabled={!reviewItem}
-          onClick={() => history.push('/review')}
-        >
-          {'Review more'}
-        </Button>
-      ) : (
-        <Typography variant="body2">{'No items to review'}</Typography>
-      )} */}
+      <ItemsList className={classes.itemsList} items={pinned?.docs ?? []} />
+      <Fab
+        className={classes.addButton}
+        color="secondary"
+        onClick={() => history.push('/add')}
+      >
+        <AddIcon />
+      </Fab>
     </div>
   );
 };
