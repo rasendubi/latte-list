@@ -26,7 +26,12 @@ const ItemsList = ({ items, ...props }: ItemsListProps) => {
           item={i.data()!}
           layout="horizontal"
           withActions={true}
-          style={{ margin: 8, maxWidth: 720 }}
+          style={{
+            marginBottom: 8,
+            maxWidth: 720,
+            width: '100%',
+            overflow: 'hidden',
+          }}
           onArchive={() => archiveItem(i)}
           onUnarchive={() => unarchiveItem(i)}
           onDelete={() => deleteItem(i)}

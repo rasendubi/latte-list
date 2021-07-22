@@ -65,9 +65,7 @@ const useStyles = makeStyles((theme) =>
       '-webkit-box-orient': 'vertical',
       overflow: 'hidden',
     },
-    sub: {
-      display: 'flex',
-    },
+    sub: {},
     icon: {
       height: '1em',
       marginRight: '0.7ch',
@@ -137,7 +135,12 @@ const ItemCard = ({
             >
               <CardHeader
                 className={classes.headerHorizontal}
-                title={item.title ?? item.meta?.title}
+                disableTypography={true}
+                title={
+                  <Typography variant="h5">
+                    {item.title ?? item.meta?.title}
+                  </Typography>
+                }
                 subheader={
                   <>
                     <Typography
