@@ -6,6 +6,8 @@ import { Integrations } from '@sentry/tracing';
 
 import Wrapper from './Wrapper';
 import App from './App';
+import { ServiceWorkerProvider } from './context/serviceWorker';
+import { InstallPromptProvider } from './context/installPrompt';
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
@@ -26,9 +28,13 @@ ReactDOM.render(
     }}
     fallback="An error has occurred"
   >
-    <Wrapper>
-      <App />
-    </Wrapper>
+    <ServiceWorkerProvider scriptUrl="/sw.js">
+      <InstallPromptProvider>
+        <Wrapper>
+          <App />
+        </Wrapper>
+      </InstallPromptProvider>
+    </ServiceWorkerProvider>
   </Sentry.ErrorBoundary>,
   document.getElementById('root')
 );

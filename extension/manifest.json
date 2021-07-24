@@ -1,0 +1,12 @@
+{
+  "manifest_version": 2,
+  "name": "Readily",
+  "version": "0.1",
+  "description": "Readily clipper extension",
+  "permissions": ["activeTab"],
+  "browser_action": {
+    "default_popup": "index.html",
+    "default_icon": {
+    }
+  }
+}
