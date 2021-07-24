@@ -1,7 +1,7 @@
 {
   "hosting": {
     "site": "readily",
-    "predeploy": "npm run build:client",
+    "predeploy": "npm run build:client && rm -rf ./out/*.map",
     "public": "out",
     "cleanUrls": true,
     "rewrites": [

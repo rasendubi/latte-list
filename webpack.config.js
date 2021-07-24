@@ -5,6 +5,7 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 const Dotenv = require('dotenv-webpack');
 const CopyPlugin = require('copy-webpack-plugin');
 const WorkboxPlugin = require('workbox-webpack-plugin');
+const SentryWebpackPlugin = require('@sentry/webpack-plugin');
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -36,6 +37,7 @@ module.exports = {
   output: {
     filename: '[name].js',
     path: OUTPUT_PATH,
+    publicPath: '/',
   },
   optimization: {
     runtimeChunk: 'single',
@@ -93,6 +95,7 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.tsx', '.js'],
   },
+  devtool: 'source-map',
   plugins: [
     new Dotenv(),
     new webpack.EnvironmentPlugin({
@@ -119,5 +122,13 @@ module.exports = {
     }),
     isDevelopment && new webpack.HotModuleReplacementPlugin(),
     isDevelopment && withReactRefresh && new ReactRefreshWebpackPlugin(),
+    !isDevelopment &&
+      new SentryWebpackPlugin({
+        org: 'rasendubi',
+        project: 'readily',
+
+        include: 'out',
+        ignore: ['node_modules', 'webpack.config.js'],
+      }),
   ].filter(Boolean),
 };
