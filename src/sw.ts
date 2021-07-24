@@ -23,7 +23,11 @@ self.addEventListener('message', (event) => {
 
 precacheAndRoute(self.__WB_MANIFEST);
 
-registerRoute(new NavigationRoute(createHandlerBoundToURL('/index.html')));
+registerRoute(
+  new NavigationRoute(createHandlerBoundToURL('/index.html'), {
+    denylist: [/^\/__\//],
+  })
+);
 
 // registerRoute(
 //   ({ url }) => url.origin === 'https://firestore.googleapis.com',
