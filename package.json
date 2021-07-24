@@ -25,7 +25,7 @@
     "firebase-admin": "9.0.0",
     "firebase-functions": "^3.14.1",
     "firebaseui": "^4.8.1",
-    "get-urls": "^10.0.0",
+    "get-urls": "^9.2.1",
     "hast-util-sanitize": "^3.0.2",
     "hast-util-select": "^4.0.2",
     "hast-util-to-string": "^1.0.4",
