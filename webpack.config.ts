@@ -48,7 +48,6 @@ function webpackConfiguration(target: Target): webpack.Configuration {
       compress: true,
       historyApiFallback: true,
       writeToDisk: true,
-      useLocalIp: true,
       // transportMode: 'ws',
       transportMode: {
         server: 'ws',

@@ -3,10 +3,15 @@
   "name": "Readily",
   "version": "0.1",
   "description": "Readily clipper extension",
-  "permissions": ["activeTab"],
+  "permissions": ["identity", "activeTab"],
   "browser_action": {
     "default_popup": "index.html",
     "default_icon": {
+    }
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{314c4959-0e05-4a3a-8b81-be089e1d57d2}"
     }
   }
 }
