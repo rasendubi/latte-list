@@ -81,7 +81,7 @@ const Index = ({}: IndexProps) => {
       ) as firebase.firestore.CollectionReference<Item>;
 
     return filter === 'all'
-      ? base.orderBy('addedOn')
+      ? base.orderBy('addedOn', 'desc')
       : base.where('pinnedOn', '!=', null).orderBy('pinnedOn');
   }, [user, filter]);
   const pinned = useCollection(pinnedQuery);
