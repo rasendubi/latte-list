@@ -27,6 +27,7 @@ export function useReviewItem(updatePeriod?: number) {
       (firebase
         .firestore()
         .collection(`users/${user.uid}/items`)
+        .where('scheduledOn', '!=', null)
         .orderBy('scheduledOn')
         // preload at least a couple of items so that review dialog
         // does not close after reviewing the first item
