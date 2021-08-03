@@ -4,12 +4,13 @@ import { useDebounce } from 'react-use';
 
 import firebase, { useMeta } from '@/firebase/client';
 import { saveItem } from '@/lib/items';
-import { Item } from '@/lib/Item';
+import { Item, ItemMeta } from '@/lib/Item';
 import AddDialogView from '@/components/AddDialogView';
 
 export interface AddDialogProps {
   initialTitle: string;
   initialUrl: string;
+  initialMeta?: ItemMeta | null;
   open: boolean;
   onClose?: () => void;
 }
@@ -17,6 +18,7 @@ export interface AddDialogProps {
 const AddDialog = ({
   initialUrl,
   initialTitle,
+  initialMeta,
   onClose,
   ...props
 }: AddDialogProps) => {
@@ -25,8 +27,12 @@ const AddDialog = ({
 
   const [debouncedUrl, setDebouncedUrl] = React.useState(url);
   useDebounce(() => setDebouncedUrl(url), 500, [url]);
-  const { meta, isLoading: metaIsLoading } = useMeta(debouncedUrl);
+  const initialMetaIsValid = initialUrl === debouncedUrl && initialMeta;
+  const { meta: loadedMeta, isLoading: metaIsLoading } = useMeta(
+    initialMetaIsValid ? null : debouncedUrl
+  );
   const isLoading = metaIsLoading || url !== debouncedUrl;
+  const meta = initialMetaIsValid ? initialMeta : loadedMeta;
 
   const item: Item = {
     url: meta?.url || url || '',

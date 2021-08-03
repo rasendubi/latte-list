@@ -3,11 +3,15 @@ import browser from 'webextension-polyfill';
 
 import AddDialog from '@/components/AddDialog';
 import firebase from '@/firebase/client';
+import { ItemMeta } from '@/lib/Item';
+import { extractMeta } from '@/lib/extractMeta';
 
 export interface CaptureProps {}
 
 const Capture = ({}: CaptureProps) => {
   const [tab, setTab] = React.useState<browser.Tabs.Tab | null>(null);
+  const [meta, setMeta] = React.useState<ItemMeta | null>(null);
+
   React.useEffect(() => {
     (async () => {
       try {
@@ -16,9 +20,15 @@ const Capture = ({}: CaptureProps) => {
           currentWindow: true,
         });
 
-        // const result = await browser.tabs.executeScript(tab.id, {
-        //   code: `document.documentElement.outerHTML`,
-        // });
+        try {
+          const [html] = await browser.tabs.executeScript(tab.id, {
+            code: `document.documentElement.outerHTML`,
+          });
+
+          if (tab.url && html) {
+            setMeta(extractMeta(tab.url, html));
+          }
+        } catch (e) {}
 
         setTab(tab);
       } catch (e) {
@@ -44,6 +54,7 @@ const Capture = ({}: CaptureProps) => {
           open={true}
           initialUrl={tab.url || ''}
           initialTitle={tab.title || ''}
+          initialMeta={meta}
           onClose={handleClose}
         />
       )}
