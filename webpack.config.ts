@@ -19,48 +19,63 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 
 const withReactRefresh = true;
 
-type Target = 'web' | 'extension';
+type Target = 'web' | 'extension' | 'functions';
 
 const options = {
   web: {
+    target: 'web',
     outputPath: path.join(__dirname, 'out'),
     devServerPort: 3000,
     entry: './src/index.tsx',
     assetsPath: 'public',
   },
   extension: {
+    target: 'web',
     outputPath: path.join(__dirname, 'dist-extension'),
     devServerPort: 3001,
     entry: './src/index.extension.tsx',
     assetsPath: 'extension',
+  },
+  functions: {
+    target: 'node',
+    outputPath: path.join(__dirname, 'dist-functions'),
+    entry: './src/cloud-functions/index.ts',
+    devServerPort: null,
+    assetsPath: null,
   },
 };
 function webpackConfiguration(target: Target): webpack.Configuration {
   const opts = options[target];
   return {
     name: target,
+    target: opts.target,
     mode: isDevelopment ? 'development' : 'production',
-    devServer: {
-      host: 'localhost',
-      port: opts.devServerPort,
-      hot: true,
-      contentBase: opts.outputPath,
-      compress: true,
-      historyApiFallback: true,
-      writeToDisk: true,
-      // transportMode: 'ws',
-      transportMode: {
-        server: 'ws',
-        // Override client for extension to properly support hot
-        // reload. The custom client is simply hard-coding the server
-        // location, so it does not use host-relative urls which
-        // result in trying to connect to moz-extension:///sock-js
-        client: target === 'extension' ? require.resolve('./wsclient') : 'ws',
-      } as any,
-      disableHostCheck: target === 'extension',
-    },
+    ...(opts.target === 'web' && opts.devServerPort
+      ? {
+          devServer: {
+            host: 'localhost',
+            port: opts.devServerPort,
+            hot: true,
+            contentBase: opts.outputPath,
+            compress: true,
+            historyApiFallback: true,
+            writeToDisk: true,
+            // transportMode: 'ws',
+            transportMode: {
+              server: 'ws',
+              // Override client for extension to properly support hot
+              // reload. The custom client is simply hard-coding the server
+              // location, so it does not use host-relative urls which
+              // result in trying to connect to moz-extension:///sock-js
+              client:
+                target === 'extension' ? require.resolve('./wsclient') : 'ws',
+            } as any,
+            disableHostCheck: target === 'extension',
+          },
+        }
+      : null),
     entry: {
-      ...(isDevelopment && withReactRefresh
+      ...(isDevelopment && withReactRefresh && opts.target === 'web'
         ? {
             reactRefreshSetup:
               '@pmmmwh/react-refresh-webpack-plugin/client/ReactRefreshEntry.js',
@@ -72,6 +87,14 @@ function webpackConfiguration(target: Target): webpack.Configuration {
       filename: '[name].js',
       publicPath: '/',
       path: opts.outputPath,
+      ...(opts.target === 'node'
+        ? {
+            library: {
+              // type: 'module',
+              type: 'commonjs2',
+            },
+          }
+        : null),
     },
     optimization: {
       runtimeChunk: 'single',
@@ -97,12 +120,27 @@ function webpackConfiguration(target: Target): webpack.Configuration {
                 presets: [
                   '@babel/react',
                   '@babel/typescript',
-                  ['@babel/env', { modules: false }],
+                  [
+                    '@babel/env',
+                    {
+                      modules: false,
+                      ...(opts.target === 'node'
+                        ? {
+                            targets: {
+                              node: 'current',
+                            },
+                          }
+                        : null),
+                    },
+                  ],
                 ],
                 plugins: [
                   '@babel/plugin-transform-runtime',
                   ['module-resolver', { alias: { '@': './src' } }],
-                  isDevelopment && withReactRefresh && 'react-refresh/babel',
+                  isDevelopment &&
+                    withReactRefresh &&
+                    opts.target === 'web' &&
+                    'react-refresh/babel',
                 ].filter(Boolean),
               },
             },
@@ -129,6 +167,12 @@ function webpackConfiguration(target: Target): webpack.Configuration {
     },
     resolve: {
       extensions: ['.ts', '.tsx', '.js'],
+      ...(opts.target === 'node'
+        ? {
+            // see https://github.com/firebase/firebase-js-sdk/issues/3941#issuecomment-710134075
+            mainFields: ['main'],
+          }
+        : null),
     },
     devtool: 'source-map',
     plugins: [
@@ -142,22 +186,26 @@ function webpackConfiguration(target: Target): webpack.Configuration {
         NODE_ENV: 'development',
       }),
 
-      new CopyPlugin({
-        patterns: [
-          {
-            from: opts.assetsPath,
-            globOptions: {
-              ignore: ['**/index.html'],
+      opts.target === 'web' &&
+        opts.assetsPath &&
+        new CopyPlugin({
+          patterns: [
+            {
+              from: opts.assetsPath,
+              globOptions: {
+                ignore: ['**/index.html'],
+              },
             },
-          },
-        ],
-      }),
+          ],
+        }),
 
-      new HTMLWebpackPlugin({
-        template: path.join(opts.assetsPath, 'index.html'),
-        filename: 'index.html',
-        inject: true,
-      }),
+      opts.target === 'web' &&
+        opts.assetsPath &&
+        new HTMLWebpackPlugin({
+          template: path.join(opts.assetsPath, 'index.html'),
+          filename: 'index.html',
+          inject: true,
+        }),
 
       target === 'web' &&
         new WorkboxPlugin.InjectManifest({
@@ -167,7 +215,10 @@ function webpackConfiguration(target: Target): webpack.Configuration {
 
       isDevelopment && new webpack.HotModuleReplacementPlugin(),
 
-      isDevelopment && withReactRefresh && new ReactRefreshWebpackPlugin(),
+      isDevelopment &&
+        withReactRefresh &&
+        opts.target === 'web' &&
+        new ReactRefreshWebpackPlugin(),
 
       target === 'web' &&
         !isDevelopment &&
@@ -185,4 +236,5 @@ function webpackConfiguration(target: Target): webpack.Configuration {
 module.exports = [
   webpackConfiguration('web'),
   webpackConfiguration('extension'),
+  webpackConfiguration('functions'),
 ];

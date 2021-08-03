@@ -31,4 +31,5 @@ yarn-error.log*
 # build
 /dist/
 /dist-extension/
+/dist-functions/
 /out/
