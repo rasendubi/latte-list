@@ -29,7 +29,10 @@ if (!firebase.apps.length) {
       firebase.performance();
     }
 
-    if (location.hostname === 'localhost') {
+    if (
+      location.hostname === 'localhost' ||
+      location.protocol === 'moz-extension:'
+    ) {
       // firebase.auth().useEmulator('http://localhost:9099');
       // firebase.firestore().useEmulator('localhost', 8080);
       firebase.functions().useEmulator('localhost', 5001);
@@ -85,12 +88,21 @@ export const useMeta = (
     setIsLoading(true);
     i.current++;
     const me = i.current;
-    fetchStats(url).then((data) => {
-      if (me === i.current) {
-        setMeta(data);
+    fetchStats(url)
+      .then((data) => {
+        if (me === i.current) {
+          setMeta(data);
+        }
+      })
+      .catch((e) => {
+        console.warn('Error fetching meta:', e);
+        if (me === i.current) {
+          setMeta(null);
+        }
+      })
+      .finally(() => {
         setIsLoading(false);
-      }
-    });
+      });
     // TODO: handle error / isLoading
   }, [url]);
 

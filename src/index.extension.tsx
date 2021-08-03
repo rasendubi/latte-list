@@ -5,7 +5,7 @@ import * as Sentry from '@sentry/react';
 import { Integrations } from '@sentry/tracing';
 
 import Wrapper from './Wrapper';
-import ExtensionPopup from './ExtensionPopup';
+import ExtensionPopup from '@/extension/ExtensionPopup';
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,

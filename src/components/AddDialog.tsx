@@ -1,6 +1,5 @@
 import React from 'react';
 import getUrls from 'get-urls';
-import { useHistory } from 'react-router-dom';
 import { useDebounce } from 'react-use';
 
 import firebase, { useMeta } from '@/firebase/client';
@@ -9,33 +8,20 @@ import { Item } from '@/lib/Item';
 import AddDialogView from '@/components/AddDialogView';
 
 export interface AddDialogProps {
+  initialTitle: string;
+  initialUrl: string;
   open: boolean;
+  onClose?: () => void;
 }
 
-const AddDialog = ({ ...props }: AddDialogProps) => {
-  const [title, setTitle] = React.useState<string | null>(null);
-  const [url, setUrl] = React.useState<string | null | undefined>(undefined);
-
-  // TODO: this should be extracted to outside
-  React.useEffect(() => {
-    const u = new URL(window.location.toString());
-    const params = {
-      title: u.searchParams.get('title'),
-      text: u.searchParams.get('text'),
-      url: u.searchParams.get('url'),
-    };
-
-    const url =
-      params.url ||
-      findUrlIn(params.text) ||
-      // not sure if any app sends it in title?
-      findUrlIn(params.title);
-
-    if (params.title && (params.text || params.url)) {
-      setTitle(params.title);
-    }
-    setUrl(url);
-  }, []);
+const AddDialog = ({
+  initialUrl,
+  initialTitle,
+  onClose,
+  ...props
+}: AddDialogProps) => {
+  const [url, setUrl] = React.useState(initialUrl);
+  const [title, setTitle] = React.useState(initialTitle);
 
   const [debouncedUrl, setDebouncedUrl] = React.useState(url);
   useDebounce(() => setDebouncedUrl(url), 500, [url]);
@@ -54,7 +40,6 @@ const AddDialog = ({ ...props }: AddDialogProps) => {
     pinnedOn: null,
   };
 
-  const history = useHistory();
   const [isSaving, setIsSaving] = React.useState(false);
   const handleSaveClick = async () => {
     const user = firebase.auth().currentUser;
@@ -62,18 +47,19 @@ const AddDialog = ({ ...props }: AddDialogProps) => {
     if (user) {
       await saveItem(user.uid, item);
     }
-    history.replace('/');
+
+    onClose?.();
   };
 
   return (
     <AddDialogView
-      url={url ?? ''}
+      url={url}
       item={item}
       isLoading={isLoading}
       isSaving={isSaving}
       onUrlChange={setUrl}
       onTitleChange={setTitle}
-      onCloseClick={() => history.replace('/')}
+      onCloseClick={onClose}
       onSaveClick={handleSaveClick}
       {...props}
     />
@@ -81,13 +67,3 @@ const AddDialog = ({ ...props }: AddDialogProps) => {
 };
 
 export default AddDialog;
-
-function findUrlIn(text: string | null): string | null {
-  if (!text) return null;
-  // This unpacking relies on Sets preserving insertion order
-  const urls = [...getUrls(text, { requireSchemeOrWww: true })];
-  if (!urls.length) return null;
-  // when urls are appended to "text" param, they are usually
-  // (always?) the last
-  return urls[urls.length - 1];
-}
