@@ -11,15 +11,18 @@ import {
   Paper,
   Select,
   Typography,
+  AppBar,
+  Toolbar,
+  Container,
 } from '@material-ui/core';
-import { AppBar, Toolbar } from '@material-ui/core';
+import SettingsIcon from '@material-ui/icons/Settings';
 
 import firebase, { useCollection } from '@/firebase/client';
 import { useUser } from '@/context/userContext';
 import ItemsList from '@/components/ItemsList';
 import { Item } from '@/lib/Item';
 import { useReviewItem } from '@/lib/useReviewItem';
-import { AddIcon, LogoutIcon } from '@/lib/icons';
+import { AddIcon } from '@/lib/icons';
 import { useInstallPrompt } from './context/installPrompt';
 
 export interface IndexProps {}
@@ -30,9 +33,7 @@ const useStyles = makeStyles((theme) =>
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      maxWidth: 720,
-      margin: '0 auto',
-      padding: 8,
+      paddingBottom: 16,
     },
     installPaper: {
       padding: 8,
@@ -110,9 +111,10 @@ const Index = ({}: IndexProps) => {
             color="inherit"
             edge="end"
             style={{ marginLeft: 8 }}
-            onClick={() => firebase.auth().signOut()}
+            aria-label="Settings"
+            onClick={() => history.push('/settings')}
           >
-            <LogoutIcon />
+            <SettingsIcon />
           </IconButton>
         </Toolbar>
       </AppBar>
@@ -132,7 +134,7 @@ const Index = ({}: IndexProps) => {
           </Button>
         </Paper>
       )}
-      <div className={classes.root}>
+      <Container className={classes.root} maxWidth="sm">
         <div className={classes.captionLine}>
           <Typography variant="subtitle2">{'Items'}</Typography>
           <Select
@@ -176,11 +178,12 @@ const Index = ({}: IndexProps) => {
         <Fab
           className={classes.addButton}
           color="secondary"
+          aria-label="Add item"
           onClick={() => history.push('/add')}
         >
           <AddIcon />
         </Fab>
-      </div>
+      </Container>
     </>
   );
 };

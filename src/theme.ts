@@ -25,11 +25,15 @@ const theme = createTheme({
       default: grey[200],
     },
   },
-  // overrides: {
-  //   MuiCssBaseline: {
-  //     '@global': {},
-  //   },
-  // },
+  overrides: {
+    MuiCssBaseline: {
+      '@global': {
+        // 'html, body, #root': {
+        //   height: '100%',
+        // },
+      },
+    },
+  },
 });
 
 export default theme;
