@@ -127,6 +127,27 @@ export async function exportItems(uid: string) {
   );
 }
 
+export async function importItems(
+  uid: string
+): Promise<{ itemsImported: number }> {
+  const backupToItem = (b: any) => ({
+    ...b,
+    addedOn: jsonToTimestamp(b.addedOn),
+    scheduledOn: jsonToTimestamp(b.scheduledOn),
+    pinnedOn: jsonToTimestamp(b.pinnedOn),
+    archivedOn: jsonToTimestamp(b.archivedOn),
+  });
+  const items: Item[] = JSON.parse(await loadFile()).map(backupToItem);
+  const collection = firebase.firestore().collection(`users/${uid}/items`);
+  await Promise.all(items.map((item) => collection.add(item)));
+  return { itemsImported: items.length };
+}
+
+const jsonToTimestamp = (
+  j: { seconds: number; nanoseconds: number } | null
+): firebase.firestore.Timestamp | null =>
+  j && new firebase.firestore.Timestamp(j.seconds, j.nanoseconds);
+
 function saveAsFile(content: string, filename: string, contentType: string) {
   const file = new Blob([content], { type: contentType });
   const url = URL.createObjectURL(file);
@@ -140,4 +161,24 @@ function saveAsFile(content: string, filename: string, contentType: string) {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   }, 0);
+}
+
+function loadFile(): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+
+      const reader = new FileReader();
+      reader.readAsText(file, 'utf-8');
+
+      reader.onload = (e) => {
+        const content = e.target.result;
+        resolve(content);
+      };
+    };
+
+    input.click();
+  });
 }
