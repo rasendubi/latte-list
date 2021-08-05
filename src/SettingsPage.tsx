@@ -14,7 +14,8 @@ import {
 import ArrowBack from '@material-ui/icons/ArrowBack';
 
 import firebase from '@/firebase/client';
-import { useUser } from './context/userContext';
+import { useUser } from '@/context/userContext';
+import { exportItems } from '@/lib/items';
 
 export interface SettingsPageProps {}
 
@@ -41,7 +42,7 @@ const useStyles = makeStyles((theme) =>
     signOutText: {
       marginRight: 32,
     },
-    signOutButton: {
+    button: {
       textTransform: 'none',
     },
   })
@@ -74,12 +75,20 @@ const SettingsPage = ({}: SettingsPageProps) => {
           </Typography>
           <Button
             variant="outlined"
-            className={classes.signOutButton}
+            className={classes.button}
             onClick={() => firebase.auth().signOut()}
           >
             {'Sign Out'}
           </Button>
         </div>
+        <Typography variant="h6">{'Data'}</Typography>
+        <Button
+          variant="outlined"
+          className={classes.button}
+          onClick={() => user && exportItems(user.uid)}
+        >
+          {'Export'}
+        </Button>
       </Container>
     </div>
   );

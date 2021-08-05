@@ -113,3 +113,31 @@ export function getHostname(url: string) {
     return null;
   }
 }
+
+export async function exportItems(uid: string) {
+  const itemsSnapshot = await firebase
+    .firestore()
+    .collection(`users/${uid}/items`)
+    .get();
+  const items = itemsSnapshot.docs.map((d) => d.data());
+  saveAsFile(
+    JSON.stringify(items, null, 2),
+    'readily.json',
+    'application/json'
+  );
+}
+
+function saveAsFile(content: string, filename: string, contentType: string) {
+  const file = new Blob([content], { type: contentType });
+  const url = URL.createObjectURL(file);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 0);
+}
