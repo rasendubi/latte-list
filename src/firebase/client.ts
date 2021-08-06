@@ -135,6 +135,19 @@ export function useCollection<T>(
   return result;
 }
 
+export function useDocument<T>(
+  query: firebase.firestore.DocumentReference<T> | null
+) {
+  const [result, setResult] =
+    React.useState<firebase.firestore.DocumentSnapshot<T> | null>(null);
+  React.useEffect(() => {
+    if (!query) return;
+    const unsubscribe = query.onSnapshot(setResult);
+    return () => unsubscribe();
+  }, [query]);
+  return result;
+}
+
 export function useCollectionData<T>(
   query: firebase.firestore.Query<T> | null
 ) {

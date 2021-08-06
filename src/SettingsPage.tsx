@@ -11,10 +11,11 @@ import {
   Toolbar,
   Typography,
   Snackbar,
+  Switch,
 } from '@material-ui/core';
 import ArrowBack from '@material-ui/icons/ArrowBack';
 
-import firebase from '@/firebase/client';
+import firebase, { useDocument } from '@/firebase/client';
 import { useUser } from '@/context/userContext';
 import { exportItems, importItems } from '@/lib/items';
 
@@ -34,14 +35,14 @@ const useStyles = makeStyles((theme) =>
       paddingBottom: 16,
       backgroundColor: theme.palette.common.white,
     },
-    signOutSection: {
+    signOutText: {
+      marginRight: 32,
+    },
+    section: {
       display: 'flex',
       flexWrap: 'wrap',
       alignItems: 'center',
       justifyContent: 'space-between',
-    },
-    signOutText: {
-      marginRight: 32,
     },
     button: {
       textTransform: 'none',
@@ -53,6 +54,10 @@ const SettingsPage = ({}: SettingsPageProps) => {
   const history = useHistory();
   const { user } = useUser();
   const classes = useStyles();
+
+  const profile = useDocument(
+    user && firebase.firestore().doc(`users/${user.uid}`)
+  );
 
   const [snackbarContent, setSnackbarContent] = React.useState<string | null>(
     null
@@ -74,7 +79,7 @@ const SettingsPage = ({}: SettingsPageProps) => {
       </AppBar>
       <Container className={classes.container} maxWidth="sm">
         <Typography variant="h6">{'Account'}</Typography>
-        <div className={classes.signOutSection}>
+        <div className={classes.section}>
           <Typography className={classes.signOutText} gutterBottom={true}>
             {'Signed in as '}
             {user?.email}
@@ -112,6 +117,22 @@ const SettingsPage = ({}: SettingsPageProps) => {
           onClose={() => setSnackbarContent(null)}
           message={snackbarContent}
         />
+        <Typography variant="h6">{'Data collection'}</Typography>
+        <div className={classes.section}>
+          <Typography variant="body2">
+            {'Opt-in for data collection'}
+          </Typography>
+          <Switch
+            checked={(profile && profile.data()?.auditOptIn) ?? false}
+            onChange={(e) => {
+              if (!user) return;
+              firebase
+                .firestore()
+                .doc(`users/${user.uid}`)
+                .set({ auditOptIn: e.target.checked }, { merge: true });
+            }}
+          />
+        </div>
       </Container>
     </div>
   );

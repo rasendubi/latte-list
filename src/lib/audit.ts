@@ -35,13 +35,18 @@ interface ItemAuditLine {
   next: ItemAuditCommonFields | null;
 }
 
-export function audit(
+export async function audit(
   ref: firebase.firestore.DocumentReference,
   action: AuditAction,
   context: AuditContext,
   prev: Item | null,
   next: Item | null
 ) {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+  const profile = await firebase.firestore().doc(`users/${user.uid}`).get();
+  if (!profile.data()?.auditOptIn) return;
+
   const audit: ItemAuditLine = {
     time: firebase.firestore.Timestamp.now(),
     action,
