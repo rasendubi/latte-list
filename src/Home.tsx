@@ -24,8 +24,8 @@ import ItemsList from '@/components/ItemsList';
 import { Item } from '@/lib/Item';
 import { useReviewItem } from '@/lib/useReviewItem';
 import { AddIcon } from '@/lib/icons';
-import { useInstallPrompt } from './context/installPrompt';
-import { useNow } from './lib/useNow';
+import { useInstallPrompt } from '@/context/installPrompt';
+import { Favicon } from '@/lib/favicon';
 
 export interface IndexProps {}
 
@@ -97,6 +97,16 @@ const Index = ({}: IndexProps) => {
     nextReview,
     now,
   } = useReviewItem(1000);
+
+  const favicon = React.useRef<Favicon>(
+    new Favicon({
+      faviconHref: '/icon.svg',
+      link: document.getElementById('favicon') as HTMLLinkElement,
+    })
+  );
+  React.useEffect(() => {
+    favicon.current.badge(!!reviewItem);
+  }, [reviewItem]);
 
   const classes = useStyles();
 
