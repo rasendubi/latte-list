@@ -3,21 +3,13 @@ import React from 'react';
 import firebase, { useCollection } from '@/firebase/client';
 import { useUser } from '@/context/userContext';
 import { Item } from '@/lib/Item';
+import { useNow } from '@/lib/useNow';
 
 export function useReviewItem(updatePeriod?: number) {
   // TODO: optimize me! we know exactly when the next item becomes
   // ready for review—schedule the timer at that time instead of
   // updating it every second.
-  const [now, setNow] = React.useState<Date>(new Date());
-  React.useEffect(() => {
-    const updateNow = () => setNow(new Date());
-    updateNow();
-
-    if (updatePeriod) {
-      const id = setInterval(updateNow, 1000);
-      return () => clearInterval(id);
-    }
-  }, [updatePeriod]);
+  const now = useNow(updatePeriod);
 
   const { user, isLoading: isUserLoading } = useUser();
 
@@ -43,8 +35,12 @@ export function useReviewItem(updatePeriod?: number) {
     return scheduledOn && scheduledOn.toDate().getTime() < now.getTime();
   })[0];
 
+  const nextReview = reviewQueue?.docs[0]?.data().scheduledOn?.toDate();
+
   return {
     isLoading,
     item,
+    nextReview,
+    now,
   };
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
+import moment from 'moment';
 
 import {
   Button,
@@ -24,6 +25,7 @@ import { Item } from '@/lib/Item';
 import { useReviewItem } from '@/lib/useReviewItem';
 import { AddIcon } from '@/lib/icons';
 import { useInstallPrompt } from './context/installPrompt';
+import { useNow } from './lib/useNow';
 
 export interface IndexProps {}
 
@@ -89,7 +91,12 @@ const Index = ({}: IndexProps) => {
 
   const history = useHistory();
 
-  const { item: reviewItem, isLoading: isReviewLoading } = useReviewItem(5000);
+  const {
+    item: reviewItem,
+    isLoading: isReviewLoading,
+    nextReview,
+    now,
+  } = useReviewItem(1000);
 
   const classes = useStyles();
 
@@ -159,9 +166,11 @@ const Index = ({}: IndexProps) => {
               >
                 {reviewItem
                   ? 'No pinned items'
+                  : nextReview
+                  ? 'Next review ' + moment(nextReview).from(now)
                   : 'No items to review. Bookmark more and come back later.'}
               </Typography>
-              {reviewItem && (
+              {reviewItem ? (
                 <Button
                   // variant="outlined"
                   variant="contained"
@@ -171,7 +180,7 @@ const Index = ({}: IndexProps) => {
                 >
                   {'Review more'}
                 </Button>
-              )}
+              ) : null}
             </>
           ))}
         <ItemsList className={classes.itemsList} items={pinned?.docs ?? []} />
