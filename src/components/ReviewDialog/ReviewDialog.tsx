@@ -12,16 +12,18 @@ import {
   Toolbar,
 } from '@material-ui/core';
 
-import ItemCard from './components/ItemCard';
-import { archiveItem, deleteItem, pinItem, scheduleLater } from './lib/items';
-import { useReviewItem } from './lib/useReviewItem';
+import ItemCard from '@/components/ItemCard';
+import { archiveItem, deleteItem, pinItem, scheduleLater } from '@/lib/items';
+import { useReviewItem } from '@/lib/useReviewItem';
 import {
   CloseIcon,
   ArchiveIcon,
   LaterIcon,
   DeleteIcon,
   PinIcon,
-} from './lib/icons';
+} from '@/lib/icons';
+import ReviewTour from './ReviewTour';
+import { useAuditOptIn } from '@/lib/audit';
 
 export interface ReviewDialogProps extends DialogProps {
   onClose?: () => void;
@@ -93,11 +95,21 @@ const ReviewDialog = ({ onClose, ...props }: ReviewDialogProps) => {
     }
   }, [isLoading, item]);
 
+  const auditOptIn = useAuditOptIn();
+  // open review tour if the user hasn’t yet answered the audit opt in
+  // question
+  const reviewTourOpen = auditOptIn === null;
+
   return (
     <Dialog {...props}>
       <AppBar className={classes.appBar} position="static" elevation={1}>
         <Toolbar>
-          <IconButton edge="start" color="inherit" onClick={onClose}>
+          <IconButton
+            edge="start"
+            color="inherit"
+            onClick={onClose}
+            data-tour="close"
+          >
             <CloseIcon />
           </IconButton>
           <Typography variant="h6" className={classes.dialogTitle}>
@@ -118,9 +130,15 @@ const ReviewDialog = ({ onClose, ...props }: ReviewDialogProps) => {
       )}
       {item && (
         <>
+          <ReviewTour open={reviewTourOpen} />
           <div className={classes.cardWrapper}>
             {/* specify key, so there is no flash of old images when item completely changes */}
-            <ItemCard key={item.id} item={item.data()} variant="outlined" />
+            <ItemCard
+              key={item.id}
+              item={item.data()}
+              variant="outlined"
+              data-tour="card"
+            />
           </div>
           <DialogActions className={classes.buttonGroup}>
             <Button
@@ -130,6 +148,7 @@ const ReviewDialog = ({ onClose, ...props }: ReviewDialogProps) => {
                 root: classes.iconButton,
                 label: classes.iconButtonLabel,
               }}
+              data-tour="later"
             >
               <LaterIcon />
               <Typography variant="caption">{'Later'}</Typography>
@@ -141,6 +160,7 @@ const ReviewDialog = ({ onClose, ...props }: ReviewDialogProps) => {
                 label: classes.iconButtonLabel,
               }}
               onClick={handleDelete}
+              data-tour="delete"
             >
               <DeleteIcon />
               <Typography variant="caption">{'Delete'}</Typography>
@@ -152,6 +172,7 @@ const ReviewDialog = ({ onClose, ...props }: ReviewDialogProps) => {
                 label: classes.iconButtonLabel,
               }}
               onClick={handleArchive}
+              data-tour="archive"
             >
               <ArchiveIcon />
               <Typography variant="caption">{'Archive'}</Typography>
@@ -163,6 +184,7 @@ const ReviewDialog = ({ onClose, ...props }: ReviewDialogProps) => {
                 label: classes.iconButtonLabel,
               }}
               onClick={handlePin}
+              data-tour="pin"
             >
               <PinIcon />
               <Typography variant="caption">{'Pin'}</Typography>

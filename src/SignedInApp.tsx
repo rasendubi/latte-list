@@ -4,7 +4,7 @@ import { useLocation, useHistory } from 'react-router-dom';
 
 import Home from '@/Home';
 import AddPage from '@/components/AddPage';
-import ReviewDialog from '@/ReviewDialog';
+import ReviewDialog from '@/components/ReviewDialog';
 import SettingsPage from './SettingsPage';
 
 export interface AppProps {}

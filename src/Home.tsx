@@ -188,7 +188,7 @@ const Index = ({}: IndexProps) => {
                   disabled={!reviewItem}
                   onClick={() => history.push('/review')}
                 >
-                  {'Review more'}
+                  {'Review'}
                 </Button>
               ) : null}
             </>

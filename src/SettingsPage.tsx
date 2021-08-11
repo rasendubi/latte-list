@@ -18,6 +18,7 @@ import ArrowBack from '@material-ui/icons/ArrowBack';
 import firebase, { useDocument } from '@/firebase/client';
 import { useUser } from '@/context/userContext';
 import { exportItems, importItems } from '@/lib/items';
+import { saveAuditOptIn, useAuditOptIn } from './lib/audit';
 
 export interface SettingsPageProps {}
 
@@ -53,16 +54,13 @@ const useStyles = makeStyles((theme) =>
 const SettingsPage = ({}: SettingsPageProps) => {
   const history = useHistory();
   const { user } = useUser();
-  const classes = useStyles();
-
-  const profile = useDocument(
-    user && firebase.firestore().doc(`users/${user.uid}`)
-  );
+  const auditOptIn = useAuditOptIn();
 
   const [snackbarContent, setSnackbarContent] = React.useState<string | null>(
     null
   );
 
+  const classes = useStyles();
   return (
     <div className={classes.main}>
       <AppBar position="sticky">
@@ -123,13 +121,9 @@ const SettingsPage = ({}: SettingsPageProps) => {
             {'Opt-in for data collection'}
           </Typography>
           <Switch
-            checked={(profile && profile.data()?.auditOptIn) ?? false}
+            checked={auditOptIn ?? false}
             onChange={(e) => {
-              if (!user) return;
-              firebase
-                .firestore()
-                .doc(`users/${user.uid}`)
-                .set({ auditOptIn: e.target.checked }, { merge: true });
+              saveAuditOptIn(e.target.checked);
             }}
           />
         </div>

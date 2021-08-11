@@ -1,4 +1,5 @@
-import firebase from '@/firebase/client';
+import firebase, { useDocument } from '@/firebase/client';
+import { useUser } from '@/context/userContext';
 import { Item } from './Item';
 import { getHostname } from './items';
 import { SpacingParams } from './spacing';
@@ -77,4 +78,30 @@ function extractItemAuditCommonFields({
     hostname: getHostname(url),
     minutes: item.meta?.minutes ?? null,
   };
+}
+
+export function saveAuditOptIn(auditOptIn: boolean) {
+  const user = firebase.auth().currentUser;
+  if (!user) {
+    throw Error('not logged in');
+  }
+
+  firebase
+    .firestore()
+    .doc(`users/${user.uid}`)
+    .set({ auditOptIn }, { merge: true });
+}
+
+/**
+ * Returns `true` if audit is allowed, `false` if audit is explicitly
+ * prohibited, `null` if decision hasn’t been made yet, `undefined` if
+ * still loading.
+ */
+export function useAuditOptIn(): boolean | null | undefined {
+  const { user } = useUser();
+  const profile = useDocument(
+    user && firebase.firestore().doc(`users/${user.uid}`)
+  );
+  const optIn = profile && profile.data()?.auditOptIn;
+  return user && profile ? (optIn === undefined ? null : optIn) : undefined;
 }
