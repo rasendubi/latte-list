@@ -15,7 +15,7 @@ import {
 } from '@material-ui/core';
 import ArrowBack from '@material-ui/icons/ArrowBack';
 
-import firebase, { useDocument } from '@/firebase/client';
+import firebase from '@/firebase/client';
 import { useUser } from '@/context/userContext';
 import { exportItems, importItems } from '@/lib/items';
 import { saveAuditOptIn, useAuditOptIn } from './lib/audit';
@@ -39,6 +39,10 @@ const useStyles = makeStyles((theme) =>
     signOutText: {
       marginRight: 32,
     },
+    sectionHeader: {
+      marginTop: 16,
+      marginBottom: 8,
+    },
     section: {
       display: 'flex',
       flexWrap: 'wrap',
@@ -47,6 +51,8 @@ const useStyles = makeStyles((theme) =>
     },
     button: {
       textTransform: 'none',
+      marginRight: 8,
+      marginBottom: 8,
     },
   })
 );
@@ -76,7 +82,9 @@ const SettingsPage = ({}: SettingsPageProps) => {
         </Toolbar>
       </AppBar>
       <Container className={classes.container} maxWidth="sm">
-        <Typography variant="h6">{'Account'}</Typography>
+        <Typography variant="h6" className={classes.sectionHeader}>
+          {'Account'}
+        </Typography>
         <div className={classes.section}>
           <Typography className={classes.signOutText} gutterBottom={true}>
             {'Signed in as '}
@@ -90,7 +98,9 @@ const SettingsPage = ({}: SettingsPageProps) => {
             {'Sign Out'}
           </Button>
         </div>
-        <Typography variant="h6">{'Data'}</Typography>
+        <Typography variant="h6" className={classes.sectionHeader}>
+          {'Data'}
+        </Typography>
         <Button
           variant="outlined"
           className={classes.button}
@@ -115,10 +125,12 @@ const SettingsPage = ({}: SettingsPageProps) => {
           onClose={() => setSnackbarContent(null)}
           message={snackbarContent}
         />
-        <Typography variant="h6">{'Data collection'}</Typography>
+        <Typography variant="h6" className={classes.sectionHeader}>
+          {'Data collection'}
+        </Typography>
         <div className={classes.section}>
           <Typography variant="body2">
-            {'Opt-in for data collection'}
+            {'Collect data for scheduling algorithm development'}
           </Typography>
           <Switch
             checked={auditOptIn ?? false}
