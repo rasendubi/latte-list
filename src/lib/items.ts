@@ -122,7 +122,7 @@ export async function exportItems(uid: string) {
   const items = itemsSnapshot.docs.map((d) => d.data());
   saveAsFile(
     JSON.stringify(items, null, 2),
-    'readily.json',
+    'latte-list.json',
     'application/json'
   );
 }

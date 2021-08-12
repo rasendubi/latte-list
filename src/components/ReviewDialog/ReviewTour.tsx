@@ -14,8 +14,8 @@ const ReviewTour = ({ open, onClose }: ReviewTourProps) => {
       content: (
         <>
           <Typography paragraph={true}>
-            The review process is the core of Readily, so it’s worth spending a
-            minute to make sure you understand it.
+            The review process is the core of Latte List, so it’s worth spending
+            a minute to make sure you understand it.
           </Typography>
           <Typography paragraph={true}>It’ll be quick, I promise.</Typography>
         </>

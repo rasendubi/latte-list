@@ -23,7 +23,7 @@ ReactDOM.render(
   <Sentry.ErrorBoundary
     showDialog={true}
     dialogOptions={{
-      title: 'It looks like Readily is having issues.',
+      title: 'It looks like Latte List is having issues.',
       subtitle: 'The author has been notified.',
     }}
     fallback="An error has occurred"

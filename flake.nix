@@ -1,5 +1,5 @@
 {
-  description = "srs-reading";
+  description = "Latte List";
 
   outputs = { self, nixpkgs }: {
     devShell.x86_64-linux =

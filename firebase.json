@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "readily",
+    "site": "latte-list",
     "predeploy": "npm run build:client && rm -rf ./out/*.map",
     "public": "out",
     "cleanUrls": true,

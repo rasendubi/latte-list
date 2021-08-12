@@ -224,7 +224,7 @@ function webpackConfiguration(target: Target): webpack.Configuration {
         !isDevelopment &&
         new SentryWebpackPlugin({
           org: 'rasendubi',
-          project: 'readily',
+          project: 'latte-list',
 
           include: opts.outputPath,
           ignore: ['node_modules', 'webpack.config.js'],

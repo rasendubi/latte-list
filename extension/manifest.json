@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "Readily",
+  "name": "Latte List",
   "version": "0.1",
-  "description": "Readily clipper extension",
+  "description": "Latte List extension",
   "permissions": ["identity", "activeTab"],
   "browser_action": {
     "default_popup": "index.html",
