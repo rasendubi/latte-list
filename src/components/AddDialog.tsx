@@ -27,7 +27,8 @@ const AddDialog = ({
 
   const [debouncedUrl, setDebouncedUrl] = React.useState(url);
   useDebounce(() => setDebouncedUrl(url), 500, [url]);
-  const initialMetaIsValid = initialUrl === debouncedUrl && initialMeta;
+  const initialMetaIsValid =
+    initialUrl === debouncedUrl && initialMeta !== undefined;
   const { meta: loadedMeta, isLoading: metaIsLoading } = useMeta(
     initialMetaIsValid ? null : debouncedUrl
   );

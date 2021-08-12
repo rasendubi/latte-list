@@ -4,7 +4,6 @@ import browser from 'webextension-polyfill';
 import AddDialog from '@/components/AddDialog';
 import firebase from '@/firebase/client';
 import { ItemMeta } from '@/lib/Item';
-import { extractMeta } from '@/lib/extractMeta';
 
 export interface CaptureProps {}
 
@@ -19,6 +18,7 @@ const Capture = ({}: CaptureProps) => {
           active: true,
           currentWindow: true,
         });
+        setTab(tab);
 
         try {
           const [html] = await browser.tabs.executeScript(tab.id, {
@@ -26,11 +26,23 @@ const Capture = ({}: CaptureProps) => {
           });
 
           if (tab.url && html) {
-            setMeta(extractMeta(tab.url, html));
+            const meta = await new Promise<ItemMeta | null>(
+              (resolve, reject) => {
+                const worker = new Worker(
+                  new URL('./worker.ts', import.meta.url)
+                );
+                worker.postMessage({ type: 'extractMeta', url: tab.url, html });
+                worker.addEventListener('message', (m) => {
+                  if (m.data.type === 'extractMeta') {
+                    resolve(m.data.meta);
+                    worker.terminate();
+                  }
+                });
+              }
+            );
+            setMeta(meta);
           }
         } catch (e) {}
-
-        setTab(tab);
       } catch (e) {
         // TODO: Unable to get the current tab. It’s likely a system
         // tab. Report the error to the user properly.
