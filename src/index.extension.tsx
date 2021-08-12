@@ -8,7 +8,7 @@ import Wrapper from './Wrapper';
 import ExtensionPopup from '@/extension/ExtensionPopup';
 
 Sentry.init({
-  dsn: process.env.SENTRY_DSN,
+  dsn: process.env.SENTRY_EXTENSION_DSN,
   integrations: [new Integrations.BrowserTracing()],
 
   // Set tracesSampleRate to 1.0 to capture 100%
