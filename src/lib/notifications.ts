@@ -26,7 +26,11 @@ export function useNotifications() {
     firebase
       .firestore()
       .collection(`users/${user.uid}/push_subscriptions`)
-      .where('endpoint', '==', subscriptionState.subscription.endpoint)
+      .where(
+        'subscription.endpoint',
+        '==',
+        subscriptionState.subscription.endpoint
+      )
       .get()
       .then((docs) => {
         setSubscriptionRegistered(!!docs.docs.length);
@@ -64,13 +68,13 @@ export function useNotifications() {
     const docs = await firebase
       .firestore()
       .collection(`users/${user.uid}/push_subscriptions`)
-      .where('endpoint', '==', subscription.endpoint)
+      .where('subscription.endpoint', '==', subscription.endpoint)
       .get();
     if (!docs.docs.length) {
       await firebase
         .firestore()
         .collection(`users/${user.uid}/push_subscriptions`)
-        .add(subscription);
+        .add({ subscription });
       setSubscriptionRegistered(true);
     }
   };
@@ -85,7 +89,7 @@ export function useNotifications() {
       const docs = await firebase
         .firestore()
         .collection(`users/${user.uid}/push_subscriptions`)
-        .where('endpoint', '==', subscription.endpoint)
+        .where('subscription.endpoint', '==', subscription.endpoint)
         .get();
       if (docs.docs.length) {
         await docs.docs[0].ref.delete();
