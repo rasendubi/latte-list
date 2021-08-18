@@ -1,3 +1,5 @@
+import React from 'react';
+
 import firebase, { useDocument } from '@/firebase/client';
 import { useUser } from '@/context/userContext';
 import { Item } from './Item';
@@ -99,9 +101,11 @@ export function saveAuditOptIn(auditOptIn: boolean) {
  */
 export function useAuditOptIn(): boolean | null | undefined {
   const { user } = useUser();
-  const profile = useDocument(
-    user && firebase.firestore().doc(`users/${user.uid}`)
+  const query = React.useMemo(
+    () => user && firebase.firestore().doc(`users/${user.uid}`),
+    [user]
   );
+  const profile = useDocument(query);
   const optIn = profile && profile.data()?.auditOptIn;
   return user && profile ? (optIn === undefined ? null : optIn) : undefined;
 }
