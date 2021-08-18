@@ -29,45 +29,6 @@ import { Favicon } from '@/lib/favicon';
 
 export interface IndexProps {}
 
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    root: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      paddingBottom: 16,
-    },
-    installPaper: {
-      padding: 8,
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    installButton: {
-      marginLeft: 8,
-    },
-    captionLine: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      alignSelf: 'stretch',
-      padding: 8,
-      position: 'sticky',
-    },
-    filterSelect: {
-      fontSize: theme.typography.caption.fontSize,
-    },
-    itemsList: {
-      alignSelf: 'stretch',
-    },
-    addButton: {
-      position: 'absolute',
-      right: 16,
-      bottom: 16,
-    },
-  })
-);
-
 const Index = ({}: IndexProps) => {
   const installPrompt = useInstallPrompt();
 
@@ -109,6 +70,10 @@ const Index = ({}: IndexProps) => {
   }, [reviewItem]);
 
   const classes = useStyles();
+
+  React.useEffect(() => {
+    console.log('Notification.permission', Notification.permission);
+  }, []);
 
   return (
     <>
@@ -208,3 +173,42 @@ const Index = ({}: IndexProps) => {
 };
 
 export default Index;
+
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    root: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      paddingBottom: 16,
+    },
+    installPaper: {
+      padding: 8,
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    installButton: {
+      marginLeft: 8,
+    },
+    captionLine: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      alignSelf: 'stretch',
+      padding: 8,
+      position: 'sticky',
+    },
+    filterSelect: {
+      fontSize: theme.typography.caption.fontSize,
+    },
+    itemsList: {
+      alignSelf: 'stretch',
+    },
+    addButton: {
+      position: 'absolute',
+      right: 16,
+      bottom: 16,
+    },
+  })
+);

@@ -1,10 +1,12 @@
 import React from 'react';
 
 type ServiceWorkerContext = {
+  registration: ServiceWorkerRegistration | null;
   newServiceWorkerAvailable: boolean;
   skipWaiting: () => void;
 };
 const ServiceWorkerContext = React.createContext<ServiceWorkerContext>({
+  registration: null,
   newServiceWorkerAvailable: false,
   skipWaiting: () => {},
 });
@@ -20,11 +22,14 @@ export const ServiceWorkerProvider = ({
 }: ServiceWorkerProviderProps) => {
   const [newServiceWorkerAvailable, setNewServiceWorkerAvailable] =
     React.useState(false);
+  const [registration, setRegistration] =
+    React.useState<ServiceWorkerRegistration | null>(null);
   const newWorker = React.useRef<ServiceWorker | null>(null);
 
   React.useEffect(() => {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register(scriptUrl).then((registration) => {
+        setRegistration(registration);
         // To be called when the next service worker is found.
         //
         // This should set newWorkerAvailable when the worker is ready
@@ -72,6 +77,7 @@ export const ServiceWorkerProvider = ({
   }, []);
 
   const context = {
+    registration,
     newServiceWorkerAvailable,
     skipWaiting: () => {
       newWorker.current?.postMessage({ action: 'skipWaiting' });

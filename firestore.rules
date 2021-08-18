@@ -4,6 +4,10 @@ service cloud.firestore {
     match /users/{uid} {
       allow read, write: if request.auth.uid == uid;
 
+      match /push_subscriptions/{item} {
+        allow read, write: if request.auth.uid == uid;
+      }
+
       match /items/{item} {
         allow read, write: if request.auth.uid == uid;
 
