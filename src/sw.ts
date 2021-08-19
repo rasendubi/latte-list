@@ -24,11 +24,17 @@ self.addEventListener('message', (event) => {
 self.addEventListener('push', (event) => {
   event.waitUntil(
     (async function () {
+      const scheduledOnString: string | undefined =
+        event.data?.json()?.scheduledOn;
+      const scheduledOn = scheduledOnString
+        ? new Date(scheduledOnString)
+        : null;
       const options = {
         body: 'You Latte List review is ready',
         tag: 'review',
         renotify: true,
         icon: '/icon.svg',
+        timestamp: scheduledOn?.valueOf(),
         data: {
           dateOfArrival: Date.now(),
         },

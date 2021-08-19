@@ -5,8 +5,9 @@ export default functions
   .runWith({
     maxInstances: 1,
     memory: '256MB',
+    timeoutSeconds: 300,
   })
-  .pubsub.schedule('every 1 hour')
+  .pubsub.schedule('every 30 mins')
   .onRun(async (context) => {
     console.log('running notify');
 
@@ -17,30 +18,35 @@ export default functions
 
     const batchProcess = async (
       query: FirebaseFirestore.Query,
+      resolve: () => void,
       last?: FirebaseFirestore.DocumentSnapshot
     ) => {
       const next = await (last ? query.startAfter(last) : query).get();
 
-      next.docs.forEach((doc) => {
-        // TODO: this can overwhelm the nodejs. Limit the number of running promises.
-        processOne(db, doc);
-      });
+      await Promise.all(next.docs.map((doc) => processOne(db, doc)));
 
-      if (next.docs.length) {
+      if (next.size) {
         const last = next.docs[next.docs.length - 1];
+        // Recurse on the next process tick, to avoid exploding the
+        // stack.
         process.nextTick(() => {
-          batchProcess(query, last);
+          batchProcess(query, resolve, last);
         });
+      } else {
+        resolve();
       }
     };
 
-    batchProcess(query);
+    await new Promise<void>((resolve) => {
+      batchProcess(query, resolve);
+    });
   });
 
 const processOne = async (
   db: FirebaseFirestore.Firestore,
   doc: FirebaseFirestore.DocumentSnapshot
 ) => {
+  console.log('processing', doc.id);
   const subscription: any = doc.data();
   const uid = doc.ref.parent.parent!.id;
 
@@ -69,9 +75,13 @@ const processOne = async (
   }
 
   try {
+    console.log('sending a push', doc.id);
     await webpush.sendNotification(
       subscription.subscription,
-      JSON.stringify({ itemId }),
+      JSON.stringify({
+        id: itemId,
+        scheduledOn: scheduledOn.toDate().toUTCString(),
+      }),
       {
         vapidDetails: {
           subject: process.env.VAPID_SUBJECT!,
