@@ -66,6 +66,7 @@
     "@types/react-router-dom": "^5.1.8",
     "@types/react-window": "^1.8.4",
     "@types/reactour": "^1.18.2",
+    "@types/web-push": "^3.3.2",
     "@types/webextension-polyfill": "^0.8.0",
     "@types/webpack": "^5.28.0",
     "@types/webpack-dev-server": "^3.11.5",

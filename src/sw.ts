@@ -21,6 +21,49 @@ self.addEventListener('message', (event) => {
   }
 });
 
+self.addEventListener('push', (event) => {
+  event.waitUntil(
+    (async function () {
+      const options = {
+        body: 'You Latte List review is ready',
+        tag: 'review',
+        renotify: true,
+        icon: '/icon.svg',
+        data: {
+          dateOfArrival: Date.now(),
+        },
+      };
+      await self.registration.showNotification('Review is ready', options);
+    })()
+  );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.waitUntil(
+    (async function () {
+      const clients = await self.clients.matchAll({
+        type: 'window',
+        includeUncontrolled: true,
+      });
+
+      let reviewClient =
+        clients.find((c) => new URL(c.url).pathname === '/review') ||
+        clients.find((c) => c.visibilityState === 'visible') ||
+        null;
+
+      if (reviewClient) {
+        reviewClient.navigate('/review');
+        reviewClient.focus();
+      } else {
+        reviewClient = await self.clients.openWindow('/review');
+      }
+
+      const notifs = await self.registration.getNotifications();
+      notifs.forEach((notification) => notification.close());
+    })()
+  );
+});
+
 precacheAndRoute(self.__WB_MANIFEST);
 
 registerRoute(
