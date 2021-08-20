@@ -26,6 +26,7 @@ import { useReviewItem } from '@/lib/useReviewItem';
 import { AddIcon } from '@/lib/icons';
 import { useInstallPrompt } from '@/context/installPrompt';
 import { Favicon } from '@/lib/favicon';
+import { useNotifications } from './lib/notifications';
 
 export interface IndexProps {}
 
@@ -59,6 +60,7 @@ const Index = ({}: IndexProps) => {
     now,
   } = useReviewItem(1000);
 
+  // badge when review is available
   const favicon = React.useRef<Favicon>(
     new Favicon({
       faviconHref: '/icon.svg',
@@ -69,12 +71,9 @@ const Index = ({}: IndexProps) => {
     favicon.current.badge(!!reviewItem);
   }, [reviewItem]);
 
+  const notifications = useNotifications();
+
   const classes = useStyles();
-
-  React.useEffect(() => {
-    console.log('Notification.permission', Notification.permission);
-  }, []);
-
   return (
     <>
       <AppBar position="sticky">
@@ -135,9 +134,10 @@ const Index = ({}: IndexProps) => {
           (isReviewLoading ? null : (
             <>
               <Typography
-                style={{ margin: '64px 24px' }}
-                color="textSecondary"
+                style={{ marginTop: 64, marginLeft: 24, marginRight: 24 }}
+                // color="textSecondary"
                 align="center"
+                gutterBottom={true}
               >
                 {reviewItem
                   ? 'No pinned items'
@@ -155,6 +155,28 @@ const Index = ({}: IndexProps) => {
                 >
                   {'Review'}
                 </Button>
+              ) : nextReview &&
+                notifications.supported &&
+                notifications.permission !== 'denied' &&
+                notifications.enabled === false ? (
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  style={{ marginTop: 12 }}
+                  onClick={() => notifications.setEnabled(true)}
+                >
+                  {'Notify me'}
+                </Button>
+              ) : nextReview &&
+                notifications.supported &&
+                notifications.enabled ? (
+                <Typography
+                  variant="caption"
+                  color="textSecondary"
+                  align="center"
+                >
+                  You will be notified
+                </Typography>
               ) : null}
             </>
           ))}

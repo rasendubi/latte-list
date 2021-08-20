@@ -21,6 +21,9 @@ const theme = createTheme({
       fontSize: 16,
       fontWeight: 700,
     },
+    button: {
+      textTransform: 'unset',
+    },
   },
   palette: {
     primary: {

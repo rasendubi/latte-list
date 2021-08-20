@@ -66,25 +66,34 @@ const SettingsPage = ({}: SettingsPageProps) => {
           </div>
         </Section>
 
-        {notifications.supported && (
-          <Section title="Notifications">
-            <div className={classes.sectionLine}>
-              <Typography>{'Enable notifications'}</Typography>
-              <Switch
-                checked={notifications.enabled ?? false}
-                onChange={(e) => {
-                  notifications.setEnabled(e.target.checked);
-                }}
-              />
-            </div>
-            {notifications.permission === 'denied' && (
-              <Typography variant="caption" color="error">
-                Notifications are disabled in the browser. You need to enable
-                them in the browser first before enabling them here.
-              </Typography>
-            )}
-          </Section>
-        )}
+        <Section title="Notifications">
+          {notifications.supported ? (
+            <>
+              <div className={classes.sectionLine}>
+                <Typography>{'Enable notifications'}</Typography>
+                {notifications.enabled !== undefined && (
+                  <Switch
+                    checked={notifications.enabled}
+                    onChange={(e) => {
+                      notifications.setEnabled(e.target.checked);
+                    }}
+                  />
+                )}
+              </div>
+              {notifications.permission === 'denied' && (
+                <Typography variant="caption" color="error">
+                  Notifications are disabled in the browser. You need to enable
+                  them in the browser first before enabling them here.
+                </Typography>
+              )}
+            </>
+          ) : notifications.supported === false ? (
+            <Typography variant="caption" color="error">
+              Notifications are not supported in your browser.
+            </Typography>
+          ) : /* still loading */
+          null}
+        </Section>
 
         <Section title="Data">
           <Button

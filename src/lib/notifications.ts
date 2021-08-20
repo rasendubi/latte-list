@@ -13,6 +13,11 @@ export function useNotifications() {
     boolean | undefined
   >();
   React.useEffect(() => {
+    if (!subscriptionState) {
+      setSubscriptionRegistered(undefined);
+      return;
+    }
+
     if (!subscriptionState.subscription) {
       setSubscriptionRegistered(false);
       return;
@@ -38,7 +43,9 @@ export function useNotifications() {
   }, [subscriptionState]);
 
   const enabled =
-    subscriptionState.permission === 'granted' && subscriptionRegistered;
+    subscriptionState &&
+    subscriptionState.permission === 'granted' &&
+    subscriptionRegistered;
 
   debug({ ...subscriptionState, subscriptionRegistered, enabled });
 
@@ -107,21 +114,21 @@ export function useNotifications() {
   };
 
   return {
-    supported: subscriptionState.supported,
-    permission: subscriptionState.permission,
+    supported: subscriptionState?.supported,
+    permission: subscriptionState?.permission,
     enabled,
     setEnabled,
   };
 }
 
 function useSubscriptionState(): {
-  subscriptionState: SubscriptionState;
+  subscriptionState: SubscriptionState | undefined;
   refresh: () => Promise<SubscriptionState>;
 } {
   const { registration } = useServiceWorker();
 
   const [subscriptionState, setSubscriptionState] =
-    React.useState<SubscriptionState>({ supported: false });
+    React.useState<SubscriptionState>();
 
   React.useEffect(() => {
     if (registration) {
