@@ -5,9 +5,9 @@ export default functions
   .runWith({
     maxInstances: 1,
     memory: '256MB',
-    timeoutSeconds: 300,
+    timeoutSeconds: 60,
   })
-  .pubsub.schedule('every 30 mins')
+  .pubsub.schedule('every 15 mins')
   .onRun(async (context) => {
     console.log('running notify');
 
