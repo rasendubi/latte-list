@@ -22,56 +22,31 @@ import {
   DeleteIcon,
   PinIcon,
 } from '@/lib/icons';
-import ReviewTour from './ReviewTour';
 import { useAuditOptIn } from '@/lib/audit';
+import { useCloseNotifications } from '@/lib/notifications';
+
+import ReviewTour from './ReviewTour';
 
 export interface ReviewDialogProps extends DialogProps {
   onClose?: () => void;
 }
 
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    appBar: {
-      // position: 'relative',
-    },
-    dialogTitle: {
-      flex: 1,
-    },
-    cardWrapper: {
-      flex: 'auto',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: theme.spacing(1),
-      maxWidth: 600,
-      alignSelf: 'center',
-    },
-    progress: {
-      marginTop: theme.spacing(8),
-      alignSelf: 'center',
-    },
-    buttonGroup: {
-      justifyContent: 'center',
-    },
-    iconButton: {
-      minWidth: 72,
-    },
-    iconButtonLabel: {
-      flexDirection: 'column',
-    },
-    doneWrapper: {
-      flex: 'auto',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-  })
-);
-
 const ReviewDialog = ({ onClose, ...props }: ReviewDialogProps) => {
+  useCloseNotifications({ tag: 'review' });
+
   const { item, isLoading } = useReviewItem();
+
+  // auto-close when review is done
+  React.useLayoutEffect(() => {
+    if (!isLoading && !item) {
+      onClose?.();
+    }
+  }, [isLoading, item]);
+
+  const auditOptIn = useAuditOptIn();
+  // open review tour if the user hasn’t yet answered the audit opt in
+  // question
+  const reviewTourOpen = auditOptIn === null;
 
   const handleLater = () => {
     item && scheduleLater(item, { review: true });
@@ -87,19 +62,6 @@ const ReviewDialog = ({ onClose, ...props }: ReviewDialogProps) => {
   };
 
   const classes = useStyles();
-
-  // auto-close when review is done
-  React.useLayoutEffect(() => {
-    if (!isLoading && !item) {
-      onClose?.();
-    }
-  }, [isLoading, item]);
-
-  const auditOptIn = useAuditOptIn();
-  // open review tour if the user hasn’t yet answered the audit opt in
-  // question
-  const reviewTourOpen = auditOptIn === null;
-
   return (
     <Dialog {...props}>
       <AppBar className={classes.appBar} position="static" elevation={1}>
@@ -197,3 +159,44 @@ const ReviewDialog = ({ onClose, ...props }: ReviewDialogProps) => {
 };
 
 export default ReviewDialog;
+
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    appBar: {
+      // position: 'relative',
+    },
+    dialogTitle: {
+      flex: 1,
+    },
+    cardWrapper: {
+      flex: 'auto',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: theme.spacing(1),
+      maxWidth: 600,
+      alignSelf: 'center',
+    },
+    progress: {
+      marginTop: theme.spacing(8),
+      alignSelf: 'center',
+    },
+    buttonGroup: {
+      justifyContent: 'center',
+    },
+    iconButton: {
+      minWidth: 72,
+    },
+    iconButtonLabel: {
+      flexDirection: 'column',
+    },
+    doneWrapper: {
+      flex: 'auto',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+  })
+);

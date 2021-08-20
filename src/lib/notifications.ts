@@ -193,3 +193,25 @@ async function getSubscriptionState(
     subscription,
   };
 }
+
+export function useCloseNotifications(filter?: GetNotificationOptions) {
+  const { registration } = useServiceWorker();
+  React.useEffect(() => {
+    if (!registration) {
+      return;
+    }
+
+    const clearNotifications = () => {
+      if (document.visibilityState === 'visible') {
+        registration.getNotifications(filter).then((notifications) => {
+          notifications.forEach((n) => n.close());
+        });
+      }
+    };
+
+    clearNotifications();
+    document.addEventListener('visibilitychange', clearNotifications);
+    return () =>
+      document.removeEventListener('visibilitychange', clearNotifications);
+  }, [registration]);
+}
