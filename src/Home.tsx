@@ -63,7 +63,7 @@ const Index = ({}: IndexProps) => {
   // badge when review is available
   const favicon = React.useRef<Favicon>(
     new Favicon({
-      faviconHref: '/icon.svg',
+      faviconHref: '/favicon.svg',
       link: document.getElementById('favicon') as HTMLLinkElement,
     })
   );

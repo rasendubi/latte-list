@@ -33,7 +33,8 @@ self.addEventListener('push', (event) => {
         body: 'You Latte List review is ready',
         tag: 'review',
         renotify: true,
-        icon: '/icon.svg',
+        icon: '/icon-512.png',
+        badge: '/badge.png',
         timestamp: scheduledOn?.valueOf(),
         data: {
           dateOfArrival: Date.now(),
