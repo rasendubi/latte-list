@@ -1,9 +1,8 @@
-import { grey, orange, purple } from '@material-ui/core/colors';
 import { createTheme } from '@material-ui/core/styles';
 
 const theme = createTheme({
   typography: {
-    fontFamily: ['"Noto Sans"', 'sans-serif'].join(','),
+    fontFamily: ['"Source Sans Pro"', 'sans-serif'].join(','),
     fontWeightRegular: 400,
     h2: {
       fontSize: 18,
@@ -27,13 +26,13 @@ const theme = createTheme({
   },
   palette: {
     primary: {
-      main: '#000000',
+      main: '#3A3335',
     },
     secondary: {
-      main: purple[800],
+      main: '#357266',
     },
     background: {
-      default: grey[200],
+      default: '#F1EDDF',
     },
   },
   overrides: {
