@@ -228,7 +228,7 @@ const useStyles = makeStyles((theme) =>
       alignSelf: 'stretch',
     },
     addButton: {
-      position: 'absolute',
+      position: 'fixed',
       right: 16,
       bottom: 16,
     },
