@@ -4,9 +4,17 @@ const theme = createTheme({
   typography: {
     fontFamily: ['"Source Sans Pro"', 'sans-serif'].join(','),
     fontWeightRegular: 400,
+    h1: {
+      fontSize: 48,
+      lineHeight: 1,
+      fontWeight: 700,
+    },
     h2: {
       fontSize: 18,
       fontWeight: 700,
+    },
+    h3: {
+      fontSize: 22,
     },
     h4: {
       fontSize: 20,

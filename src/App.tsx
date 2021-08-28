@@ -3,6 +3,7 @@ import React, { Suspense } from 'react';
 import { useUser } from '@/context/userContext';
 import UpdateSnackbar from '@/components/UpdateSnackbar';
 
+const Landing = React.lazy(() => import('./landing'));
 const LoginScreen = React.lazy(() => import('./LoginScreen'));
 const SignedInApp = React.lazy(() => import('./SignedInApp'));
 
@@ -16,7 +17,7 @@ const App = ({}: AppProps) => {
 
   return (
     <Suspense fallback={null}>
-      {user ? <SignedInApp /> : <LoginScreen />}
+      {user ? <SignedInApp /> : <Landing />}
       <UpdateSnackbar />
     </Suspense>
   );

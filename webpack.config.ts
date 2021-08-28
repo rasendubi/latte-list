@@ -154,10 +154,7 @@ function webpackConfiguration(target: Target): webpack.Configuration {
         },
         {
           test: /\.(jpe?g|png|gif|svg)$/i,
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-          },
+          type: 'asset',
         },
         {
           test: /\.css$/i,
