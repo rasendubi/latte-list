@@ -200,13 +200,29 @@ const Landing = ({}: LandingProps) => {
         </Container>
       </div>
       <footer className={clsx(classes.section, classes.footer)}>
-        <Container maxWidth="sm">
-          <Typography variant="body2" color="primary">
-            Built with ❤ by{' '}
-            <a className={classes.link} href="https://www.alexeyshmalko.com">
-              Alexey Shmalko
-            </a>
-          </Typography>
+        <Container maxWidth="md">
+          <div className={classes.footerContainer}>
+            <Typography variant="body2" color="primary">
+              Built with ❤ by{' '}
+              <a className={classes.link} href="https://www.alexeyshmalko.com">
+                Alexey Shmalko
+              </a>
+            </Typography>
+            <Typography variant="body2" color="primary">
+              Have any question? Hit me at{' '}
+              <a className={classes.link} href="mailto:rasen.dubi@gmail.com">
+                rasen.dubi@gmail.com
+              </a>
+            </Typography>
+            <Typography variant="body2" color="primary">
+              <a
+                className={clsx(classes.link, classes.linkNoUnderline)}
+                href="/privacy-policy.html"
+              >
+                Privacy Policy
+              </a>
+            </Typography>
+          </div>
         </Container>
       </footer>
     </div>
@@ -276,9 +292,28 @@ const useStyles = makeStyles((theme) => ({
   },
   link: {
     color: 'inherit',
+    borderRadius: 2,
+    transition: 'background-color 0.1s ease-in-out',
+    backgroundColor: 'rgba(0,0,0,0.0)',
+    '&:hover': {
+      backgroundColor: 'rgba(0,0,0,0.05)',
+    },
+    '&:active': {
+      backgroundColor: 'rgba(0,0,0,0.1)',
+    },
+  },
+  linkNoUnderline: {
+    textDecoration: 'none',
   },
   footer: {
     padding: '8px 0',
+  },
+  footerContainer: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    columnGap: 32,
+    rowGap: 8,
   },
   browserIcon: {
     width: 16,
