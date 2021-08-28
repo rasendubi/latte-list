@@ -1,17 +1,17 @@
 {
   "private": true,
   "license": "AGPL-3.0",
-  "main": "dist-functions/main.js",
+  "main": "dist/functions/main.js",
   "scripts": {
     "dev": "concurrently 'npm:dev:*'",
     "dev:client": "webpack serve --config-name web",
     "dev:extension": "webpack serve --config-name extension",
-    "dev:server": "webpack watch --config-name functions",
+    "dev:functions": "webpack watch --config-name functions",
     "dev:emulators": "firebase emulators:start --only functions",
     "build": "concurrently 'npm:build:*'",
     "build:client": "NODE_ENV=production webpack --config-name web",
-    "build:extension": "NODE_ENV=production webpack --config-name extension",
-    "build:server": "NODE_ENV=production webpack --config-name functions",
+    "build:extension": "NODE_ENV=production webpack --config-name extension && web-ext build",
+    "build:functions": "NODE_ENV=production webpack --config-name functions",
     "start": "npm run dev",
     "deploy": "firebase deploy",
     "deploy:hosting": "firebase deploy --only hosting",
@@ -87,9 +87,14 @@
     "ts-node": "^10.1.0",
     "type-fest": "^1.2.2",
     "typescript": "^4.3.5",
+    "web-ext": "^6.3.0",
     "webpack": "^5.45.1",
     "webpack-cli": "^4.7.2",
     "webpack-dev-server": "^3.11.2",
     "workbox-webpack-plugin": "^6.1.5"
+  },
+  "webExt": {
+    "sourceDir": "dist/extension/",
+    "artifactsDir": "dist/extension-zips/"
   }
 }

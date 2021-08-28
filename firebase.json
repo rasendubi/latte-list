@@ -19,7 +19,7 @@
   "functions": {
     "source": ".",
     "runtime": "nodejs14",
-    "predeploy": "npm run build:server",
+    "predeploy": "npm run build:functions",
     "ignore": [
       ".firebase/**",
       ".firebaserc",

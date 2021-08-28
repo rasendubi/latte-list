@@ -31,14 +31,14 @@ const options = {
   },
   extension: {
     target: 'web',
-    outputPath: path.join(__dirname, 'dist-extension'),
+    outputPath: path.join(__dirname, 'dist/extension'),
     devServerPort: 3001,
     entry: './src/index.extension.tsx',
     assetsPath: 'extension',
   },
   functions: {
     target: 'node',
-    outputPath: path.join(__dirname, 'dist-functions'),
+    outputPath: path.join(__dirname, 'dist/functions'),
     entry: './src/cloud-functions/index.ts',
     devServerPort: null,
     assetsPath: null,
