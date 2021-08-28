@@ -38,13 +38,13 @@ if (!firebase.apps.length) {
       firebase.functions().useEmulator('localhost', 5001);
     }
 
-    firebase.firestore().settings({
-      cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
-    });
+    // firebase.firestore().settings({
+    //   cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
+    // });
     // TODO: we might need to ask the user if they’re on a trusted device
-    firebase.firestore().enablePersistence({
-      synchronizeTabs: true,
-    });
+    // firebase.firestore().enablePersistence({
+    //   synchronizeTabs: true,
+    // });
   }
 }
 
