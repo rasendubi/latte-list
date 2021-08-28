@@ -1,7 +1,13 @@
 import React from 'react';
 import clsx from 'clsx';
 
-import { Container, makeStyles, Paper, Typography } from '@material-ui/core';
+import {
+  Button,
+  Container,
+  makeStyles,
+  Paper,
+  Typography,
+} from '@material-ui/core';
 
 import Shield from '@material-ui/icons/ShieldOutlined';
 import ImportExport from '@material-ui/icons/ImportExport';
@@ -188,6 +194,13 @@ const Landing = ({}: LandingProps) => {
                 <img className={classes.browserIcon} src={Firefox} />
                 Firefox
               </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                href="https://addons.mozilla.org/en-US/firefox/addon/latte-list/"
+              >
+                Get Extension
+              </Button>
             </Paper>
 
             <Paper className={classes.getItItem} variant="outlined">
