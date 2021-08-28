@@ -11,6 +11,7 @@
   "browser_action": {
     "default_popup": "index.html"
   },
+  "content_security_policy": "script-src 'self' https://apis.google.com/; object-src 'self'",
   "browser_specific_settings": {
     "gecko": {
       "id": "{314c4959-0e05-4a3a-8b81-be089e1d57d2}"
