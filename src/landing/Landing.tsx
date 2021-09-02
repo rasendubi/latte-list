@@ -182,7 +182,6 @@ const Landing = ({}: LandingProps) => {
               <SignInButton variant="short" />
             </Paper>
 
-            {/*
             <Paper className={classes.getItItem} variant="outlined">
               <Typography variant="h3" align="center">
                 <img className={classes.browserIcon} src={Chrome} />
@@ -191,7 +190,7 @@ const Landing = ({}: LandingProps) => {
               <Button
                 variant="contained"
                 color="primary"
-                href="https://addons.mozilla.org/en-US/firefox/addon/latte-list/"
+                href="https://chrome.google.com/webstore/detail/latte-list/jkdfdapgbjiabmmlckaibmapkdkmgfjp"
               >
                 Get Extension
               </Button>
@@ -211,6 +210,7 @@ const Landing = ({}: LandingProps) => {
               </Button>
             </Paper>
 
+            {/*
             <Paper className={classes.getItItem} variant="outlined">
               <Typography variant="h3" align="center">
                 <img className={classes.browserIcon} src={Safari} />
