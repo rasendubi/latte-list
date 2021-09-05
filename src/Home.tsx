@@ -9,7 +9,6 @@ import {
   IconButton,
   makeStyles,
   MenuItem,
-  Paper,
   Select,
   Typography,
   AppBar,
@@ -24,15 +23,13 @@ import ItemsList from '@/components/ItemsList';
 import { Item } from '@/lib/Item';
 import { useReviewItem } from '@/lib/useReviewItem';
 import { AddIcon } from '@/lib/icons';
-import { useInstallPrompt } from '@/context/installPrompt';
 import { Favicon } from '@/lib/favicon';
 import { useNotifications } from './lib/notifications';
+import InstallBar from './components/InstallBar';
 
-export interface IndexProps {}
+export interface HomeProps {}
 
-const Index = ({}: IndexProps) => {
-  const installPrompt = useInstallPrompt();
-
+const Home = ({}: HomeProps) => {
   const { user } = useUser();
 
   const [filter, setFilter] = React.useState('pinned');
@@ -99,27 +96,11 @@ const Index = ({}: IndexProps) => {
           </IconButton>
         </Toolbar>
       </AppBar>
-      {'share' in navigator && installPrompt && (
-        <Paper className={classes.installPaper} elevation={2} square={true}>
-          <Typography variant="subtitle2">
-            {'Install app to save items by sharing'}
-          </Typography>
-          <Button
-            className={classes.installButton}
-            disableElevation={true}
-            color="secondary"
-            variant="contained"
-            onClick={() => installPrompt()}
-          >
-            {'Install'}
-          </Button>
-        </Paper>
-      )}
+      <InstallBar />
       <Container className={classes.root} maxWidth="sm">
         <div className={classes.captionLine}>
           <Typography variant="subtitle2">{'Items'}</Typography>
           <Select
-            // native={true}
             className={classes.filterSelect}
             disableUnderline={true}
             value={filter}
@@ -194,7 +175,7 @@ const Index = ({}: IndexProps) => {
   );
 };
 
-export default Index;
+export default Home;
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -203,15 +184,6 @@ const useStyles = makeStyles((theme) =>
       flexDirection: 'column',
       alignItems: 'center',
       paddingBottom: 16,
-    },
-    installPaper: {
-      padding: 8,
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    installButton: {
-      marginLeft: 8,
     },
     captionLine: {
       display: 'flex',
