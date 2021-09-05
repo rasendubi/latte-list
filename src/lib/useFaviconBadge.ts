@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const useReviewFaviconBadge = (reviewAvailable: boolean) => {
+export const useFaviconBadge = (badge: boolean) => {
   const favicon = React.useRef<Favicon>();
   React.useEffect(() => {
     if (!favicon.current) {
@@ -10,8 +10,8 @@ export const useReviewFaviconBadge = (reviewAvailable: boolean) => {
       });
     }
 
-    favicon.current.badge(reviewAvailable);
-  }, [reviewAvailable]);
+    favicon.current.badge(badge);
+  }, [badge]);
 };
 
 interface FaviconOpts {

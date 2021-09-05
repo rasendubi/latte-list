@@ -25,7 +25,7 @@ import { useReviewItem } from '@/lib/useReviewItem';
 import { AddIcon } from '@/lib/icons';
 import { useNotifications } from '@/lib/notifications';
 import InstallBar from '@/components/InstallBar';
-import { useReviewFaviconBadge } from '@/lib/useReviewFaviconBadge';
+import { useFaviconBadge } from '@/lib/useFaviconBadge';
 
 export interface HomeProps {}
 
@@ -57,7 +57,7 @@ const Home = ({}: HomeProps) => {
     now,
   } = useReviewItem(1000);
 
-  useReviewFaviconBadge(!!reviewItem);
+  useFaviconBadge(!!reviewItem);
 
   const notifications = useNotifications();
 
