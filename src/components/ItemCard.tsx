@@ -104,28 +104,26 @@ const ItemCard = ({
               </CardContent>
             </CardActionArea>
             {withActions && (
-              <CardActions className={classes.cardActionsHorizontal}>
+              <CardActions
+                className={classes.cardActionsHorizontal}
+                disableSpacing={true}
+              >
                 {item.archivedOn ? (
-                  <IconButton
-                    title="Unarchive"
-                    size="small"
-                    onClick={onUnarchive}
-                  >
+                  <IconButton title="Unarchive" onClick={onUnarchive}>
                     <UnarchiveIcon />
                   </IconButton>
                 ) : (
-                  <IconButton title="Archive" size="small" onClick={onArchive}>
+                  <IconButton title="Archive" onClick={onArchive}>
                     <ArchiveIcon />
                   </IconButton>
                 )}
                 <IconButton
                   title={item.pinnedOn ? 'Unpin' : 'Pin'}
-                  size="small"
                   onClick={item.pinnedOn ? onUnpin : onPin}
                 >
                   <PinIcon unpin={!!item.pinnedOn} />
                 </IconButton>
-                <IconButton title="Delete" size="small" onClick={onDelete}>
+                <IconButton title="Delete" onClick={onDelete}>
                   <DeleteIcon />
                 </IconButton>
               </CardActions>
@@ -224,7 +222,8 @@ const useStyles = makeStyles((theme) =>
       paddingBottom: 8,
     },
     cardActionsHorizontal: {
-      paddingLeft: 12,
+      // I want it more compact
+      padding: 4,
     },
     descriptionHorizontal: {
       display: '-webkit-box',
