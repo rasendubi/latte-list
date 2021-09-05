@@ -1,18 +1,32 @@
-export interface FaviconOpts {
+import React from 'react';
+
+export const useReviewFaviconBadge = (reviewAvailable: boolean) => {
+  const favicon = React.useRef<Favicon>(
+    new Favicon({
+      faviconHref: '/favicon.svg',
+      link: document.getElementById('favicon') as HTMLLinkElement,
+    })
+  );
+  React.useEffect(() => {
+    favicon.current.badge(reviewAvailable);
+  }, [reviewAvailable]);
+};
+
+interface FaviconOpts {
   faviconHref: string;
   link: HTMLLinkElement;
   size?: number;
 }
 
-export class Favicon {
+class Favicon {
   private opts: FaviconOpts;
 
   public constructor(opts: FaviconOpts) {
     this.opts = opts;
   }
 
-  public badge(p: any = true) {
-    if (!p) {
+  public badge(badge: boolean) {
+    if (!badge) {
       this.drawWith(() => {});
     } else {
       this.drawWith((context, size) => {
@@ -47,26 +61,4 @@ export class Favicon {
       link.type = 'image/png';
     };
   }
-}
-
-function getIcons() {
-  const icons: HTMLLinkElement[] = [];
-  const links = document
-    .getElementsByTagName('head')[0]
-    .getElementsByTagName('link');
-  for (let i = 0; i < links.length; ++i) {
-    const link = links[i];
-    if (/(^|\s)icon(\s|$)/i.test(link.getAttribute('rel') ?? '')) {
-      icons.push(link);
-    }
-  }
-
-  if (!icons.length) {
-    const icon = document.createElement('link');
-    icon.setAttribute('rel', 'icon');
-    document.getElementsByTagName('head')[0].appendChild(icon);
-    icons.push(icon);
-  }
-
-  return icons;
 }

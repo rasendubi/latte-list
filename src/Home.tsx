@@ -23,9 +23,9 @@ import ItemsList from '@/components/ItemsList';
 import { Item } from '@/lib/Item';
 import { useReviewItem } from '@/lib/useReviewItem';
 import { AddIcon } from '@/lib/icons';
-import { Favicon } from '@/lib/favicon';
-import { useNotifications } from './lib/notifications';
-import InstallBar from './components/InstallBar';
+import { useNotifications } from '@/lib/notifications';
+import InstallBar from '@/components/InstallBar';
+import { useReviewFaviconBadge } from '@/lib/useReviewFaviconBadge';
 
 export interface HomeProps {}
 
@@ -57,16 +57,7 @@ const Home = ({}: HomeProps) => {
     now,
   } = useReviewItem(1000);
 
-  // badge when review is available
-  const favicon = React.useRef<Favicon>(
-    new Favicon({
-      faviconHref: '/favicon.svg',
-      link: document.getElementById('favicon') as HTMLLinkElement,
-    })
-  );
-  React.useEffect(() => {
-    favicon.current.badge(!!reviewItem);
-  }, [reviewItem]);
+  useReviewFaviconBadge(!!reviewItem);
 
   const notifications = useNotifications();
 
