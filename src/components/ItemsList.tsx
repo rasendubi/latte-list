@@ -12,6 +12,7 @@ import {
   unarchiveItem,
   unpinItem,
 } from '@/lib/items';
+import { audit } from '@/lib/audit';
 
 export interface ItemsListProps {
   items: firebase.firestore.QueryDocumentSnapshot<Item>[];
@@ -38,6 +39,7 @@ const ItemsList = ({ className, items, ...props }: ItemsListProps) => {
           onDelete={() => deleteItem(i)}
           onPin={() => pinItem(i)}
           onUnpin={() => unpinItem(i)}
+          onClick={() => audit(i.ref, 'open', {}, i.data(), i.data())}
         />
       ))}
     </div>

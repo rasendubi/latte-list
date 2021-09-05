@@ -1,10 +1,13 @@
 import React from 'react';
+import Debug from 'debug';
 
 import firebase, { useDocument } from '@/firebase/client';
 import { useUser } from '@/context/userContext';
 import { Item } from './Item';
 import { getHostname } from './items';
 import { SpacingParams } from './spacing';
+
+const debug = Debug('latte:lib:audit');
 
 interface ItemAuditCommonFields {
   hostname: string | null;
@@ -24,7 +27,8 @@ export type AuditAction =
   | 'unpin'
   | 'archive'
   | 'unarchive'
-  | 'delete';
+  | 'delete'
+  | 'open';
 
 export interface AuditContext {
   review?: boolean;
@@ -45,6 +49,8 @@ export async function audit(
   prev: Item | null,
   next: Item | null
 ) {
+  debug('audit %o', { ref, action, context, prev, next });
+
   const user = firebase.auth().currentUser;
   if (!user) return;
   const profile = await firebase.firestore().doc(`users/${user.uid}`).get();

@@ -22,7 +22,7 @@ import {
   DeleteIcon,
   PinIcon,
 } from '@/lib/icons';
-import { useAuditOptIn } from '@/lib/audit';
+import { audit, useAuditOptIn } from '@/lib/audit';
 import { useCloseNotifications } from '@/lib/notifications';
 
 import ReviewTour from './ReviewTour';
@@ -100,6 +100,15 @@ const ReviewDialog = ({ onClose, ...props }: ReviewDialogProps) => {
               item={item.data()}
               variant="outlined"
               data-tour="card"
+              onClick={() =>
+                audit(
+                  item.ref,
+                  'open',
+                  { review: true },
+                  item.data(),
+                  item.data()
+                )
+              }
             />
           </div>
           <DialogActions className={classes.buttonGroup}>

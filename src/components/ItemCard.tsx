@@ -23,7 +23,176 @@ export interface ItemCardProps extends CardProps {
   onPin?: () => void;
   onUnpin?: () => void;
   onDelete?: () => void;
+  onClick?: () => void;
 }
+
+const ItemCard = ({
+  item,
+  layout,
+  withActions,
+  className,
+  onArchive,
+  onUnarchive,
+  onPin,
+  onUnpin,
+  onDelete,
+  onClick,
+  ...props
+}: ItemCardProps) => {
+  const classes = useStyles();
+  const hostname = getHostname(item.url)?.replace(/^www\./, '');
+  return (
+    <Card
+      square={true}
+      elevation={0}
+      {...props}
+      className={clsx(classes.root, className)}
+    >
+      {layout === 'horizontal' ? (
+        <div className={classes.horizontal}>
+          <div className={classes.horizontalRight}>
+            <CardActionArea
+              component="a"
+              href={item.url}
+              onClick={onClick}
+              target="_blank"
+              rel="noopener"
+              className={classes.cardRightActionArea}
+            >
+              <CardHeader
+                className={classes.headerHorizontal}
+                disableTypography={true}
+                title={
+                  <Typography variant="h5">
+                    {item.title ?? item.meta?.title}
+                  </Typography>
+                }
+                subheader={
+                  <>
+                    <Typography
+                      variant="caption"
+                      className={classes.sub}
+                      color="textSecondary"
+                      gutterBottom={true}
+                    >
+                      {item.meta?.icon && (
+                        <img className={classes.icon} src={item.meta.icon} />
+                      )}
+                      {hostname}
+                      {item.meta?.minutes && (
+                        <div className={classes.readTime}>
+                          {Math.ceil(item.meta.minutes)}
+                          {' min'}
+                        </div>
+                      )}
+                    </Typography>
+                  </>
+                }
+              />
+              <CardContent
+                className={clsx(
+                  classes.cardContent,
+                  classes.cardContentHorizontal
+                )}
+              >
+                <Typography
+                  variant="body2"
+                  className={classes.descriptionHorizontal}
+                >
+                  {item.meta?.description}
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+            {withActions && (
+              <CardActions className={classes.cardActionsHorizontal}>
+                {item.archivedOn ? (
+                  <IconButton
+                    title="Unarchive"
+                    size="small"
+                    onClick={onUnarchive}
+                  >
+                    <UnarchiveIcon />
+                  </IconButton>
+                ) : (
+                  <IconButton title="Archive" size="small" onClick={onArchive}>
+                    <ArchiveIcon />
+                  </IconButton>
+                )}
+                <IconButton
+                  title={item.pinnedOn ? 'Unpin' : 'Pin'}
+                  size="small"
+                  onClick={item.pinnedOn ? onUnpin : onPin}
+                >
+                  <PinIcon unpin={!!item.pinnedOn} />
+                </IconButton>
+                <IconButton title="Delete" size="small" onClick={onDelete}>
+                  <DeleteIcon />
+                </IconButton>
+              </CardActions>
+            )}
+          </div>
+          {item.meta?.image && (
+            <CardActionArea
+              component="a"
+              href={item.url}
+              onClick={onClick}
+              target="_blank"
+              rel="noopener"
+              className={classes.mediaActionAreaHorizontal}
+            >
+              <CardMedia
+                image={item.meta?.image}
+                className={classes.mediaHorizontal}
+              />
+            </CardActionArea>
+          )}
+        </div>
+      ) : (
+        <CardActionArea
+          component="a"
+          href={item.url}
+          onClick={onClick}
+          target="_blank"
+          rel="noopener"
+        >
+          <CardHeader
+            title={item.title ?? item.meta?.title}
+            subheader={
+              <Typography
+                variant="caption"
+                className={classes.sub}
+                color="textSecondary"
+              >
+                {item.meta?.icon && (
+                  <img className={classes.icon} src={item.meta.icon} />
+                )}
+                {hostname}
+                {item.meta?.minutes && (
+                  <div className={classes.readTime}>
+                    {Math.ceil(item.meta.minutes)}
+                    {' min'}
+                  </div>
+                )}
+              </Typography>
+            }
+          />
+          {item.meta?.image && (
+            <CardMedia image={item.meta.image} className={classes.media} />
+          )}
+          {item.meta?.description && (
+            <CardContent className={classes.cardContent}>
+              <Typography variant="body2" gutterBottom={true}>
+                {item.meta?.description}
+              </Typography>
+            </CardContent>
+          )}
+        </CardActionArea>
+      )}
+    </Card>
+  );
+};
+
+export default ItemCard;
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -105,167 +274,3 @@ const useStyles = makeStyles((theme) =>
     },
   })
 );
-
-const ItemCard = ({
-  item,
-  layout,
-  withActions,
-  className,
-  onArchive,
-  onUnarchive,
-  onPin,
-  onUnpin,
-  onDelete,
-  ...props
-}: ItemCardProps) => {
-  const classes = useStyles();
-  const hostname = getHostname(item.url)?.replace(/^www\./, '');
-  return (
-    <Card
-      square={true}
-      elevation={0}
-      {...props}
-      className={clsx(classes.root, className)}
-    >
-      {layout === 'horizontal' ? (
-        <div className={classes.horizontal}>
-          <div className={classes.horizontalRight}>
-            <CardActionArea
-              component="a"
-              href={item.url}
-              target="_blank"
-              rel="noopener"
-              className={classes.cardRightActionArea}
-            >
-              <CardHeader
-                className={classes.headerHorizontal}
-                disableTypography={true}
-                title={
-                  <Typography variant="h5">
-                    {item.title ?? item.meta?.title}
-                  </Typography>
-                }
-                subheader={
-                  <>
-                    <Typography
-                      variant="caption"
-                      className={classes.sub}
-                      color="textSecondary"
-                      gutterBottom={true}
-                    >
-                      {item.meta?.icon && (
-                        <img className={classes.icon} src={item.meta.icon} />
-                      )}
-                      {hostname}
-                      {item.meta?.minutes && (
-                        <div className={classes.readTime}>
-                          {Math.ceil(item.meta.minutes)}
-                          {' min'}
-                        </div>
-                      )}
-                    </Typography>
-                  </>
-                }
-              />
-              <CardContent
-                className={clsx(
-                  classes.cardContent,
-                  classes.cardContentHorizontal
-                )}
-              >
-                <Typography
-                  variant="body2"
-                  className={classes.descriptionHorizontal}
-                >
-                  {item.meta?.description}
-                </Typography>
-              </CardContent>
-            </CardActionArea>
-            {withActions && (
-              <CardActions className={classes.cardActionsHorizontal}>
-                {item.archivedOn ? (
-                  <IconButton
-                    title="Unarchive"
-                    size="small"
-                    onClick={onUnarchive}
-                  >
-                    <UnarchiveIcon />
-                  </IconButton>
-                ) : (
-                  <IconButton title="Archive" size="small" onClick={onArchive}>
-                    <ArchiveIcon />
-                  </IconButton>
-                )}
-                <IconButton
-                  title={item.pinnedOn ? 'Unpin' : 'Pin'}
-                  size="small"
-                  onClick={item.pinnedOn ? onUnpin : onPin}
-                >
-                  <PinIcon unpin={!!item.pinnedOn} />
-                </IconButton>
-                <IconButton title="Delete" size="small" onClick={onDelete}>
-                  <DeleteIcon />
-                </IconButton>
-              </CardActions>
-            )}
-          </div>
-          {item.meta?.image && (
-            <CardActionArea
-              component="a"
-              href={item.url}
-              target="_blank"
-              rel="noopener"
-              className={classes.mediaActionAreaHorizontal}
-            >
-              <CardMedia
-                image={item.meta?.image}
-                className={classes.mediaHorizontal}
-              />
-            </CardActionArea>
-          )}
-        </div>
-      ) : (
-        <CardActionArea
-          component="a"
-          href={item.url}
-          target="_blank"
-          rel="noopener"
-        >
-          <CardHeader
-            title={item.title ?? item.meta?.title}
-            subheader={
-              <Typography
-                variant="caption"
-                className={classes.sub}
-                color="textSecondary"
-              >
-                {item.meta?.icon && (
-                  <img className={classes.icon} src={item.meta.icon} />
-                )}
-                {hostname}
-                {item.meta?.minutes && (
-                  <div className={classes.readTime}>
-                    {Math.ceil(item.meta.minutes)}
-                    {' min'}
-                  </div>
-                )}
-              </Typography>
-            }
-          />
-          {item.meta?.image && (
-            <CardMedia image={item.meta.image} className={classes.media} />
-          )}
-          {item.meta?.description && (
-            <CardContent className={classes.cardContent}>
-              <Typography variant="body2" gutterBottom={true}>
-                {item.meta?.description}
-              </Typography>
-            </CardContent>
-          )}
-        </CardActionArea>
-      )}
-    </Card>
-  );
-};
-
-export default ItemCard;
