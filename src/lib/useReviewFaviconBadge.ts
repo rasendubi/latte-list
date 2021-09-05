@@ -1,13 +1,15 @@
 import React from 'react';
 
 export const useReviewFaviconBadge = (reviewAvailable: boolean) => {
-  const favicon = React.useRef<Favicon>(
-    new Favicon({
-      faviconHref: '/favicon.svg',
-      link: document.getElementById('favicon') as HTMLLinkElement,
-    })
-  );
+  const favicon = React.useRef<Favicon>();
   React.useEffect(() => {
+    if (!favicon.current) {
+      favicon.current = new Favicon({
+        faviconHref: '/favicon.svg',
+        link: document.getElementById('favicon') as HTMLLinkElement,
+      });
+    }
+
     favicon.current.badge(reviewAvailable);
   }, [reviewAvailable]);
 };
