@@ -172,6 +172,18 @@ const SettingsPage = ({}: SettingsPageProps) => {
             </Button>
           </div>
         </Section>
+
+        <div style={{ marginTop: 'auto', paddingTop: 32 }}>
+          <Typography variant="body2">
+            Have any question? Write me at{' '}
+            <a
+              className={classes.link}
+              href={`mailto:${process.env.SUPPORT_EMAIL}`}
+            >
+              {process.env.SUPPORT_EMAIL}
+            </a>
+          </Typography>
+        </div>
       </Container>
     </div>
   );
@@ -204,6 +216,8 @@ const useStyles = makeStyles((theme) =>
       justifyContent: 'stretch',
     },
     container: {
+      display: 'flex',
+      flexDirection: 'column',
       flexGrow: 1,
       paddingTop: 16,
       paddingBottom: 16,
@@ -235,6 +249,9 @@ const useStyles = makeStyles((theme) =>
     browserIcon: {
       width: 20,
       height: 20,
+    },
+    link: {
+      color: 'inherit',
     },
   })
 );
