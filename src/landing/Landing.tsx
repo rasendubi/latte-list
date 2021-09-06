@@ -12,13 +12,9 @@ import {
 import Shield from '@material-ui/icons/ShieldOutlined';
 import ImportExport from '@material-ui/icons/ImportExport';
 import GitHub from '@material-ui/icons/GitHub';
-import Heart from '@material-ui/icons/Favorite';
-
-import Chrome from '@fortawesome/fontawesome-free/svgs/brands/chrome.svg';
-import Firefox from '@fortawesome/fontawesome-free/svgs/brands/firefox.svg';
-import Safari from '@fortawesome/fontawesome-free/svgs/brands/safari.svg';
 
 import SignInButton from './SignInButton';
+import { ChromeIcon, FirefoxIcon } from '@/lib/icons';
 
 export interface LandingProps {}
 
@@ -184,7 +180,7 @@ const Landing = ({}: LandingProps) => {
 
             <Paper className={classes.getItItem} variant="outlined">
               <Typography variant="h3" align="center">
-                <img className={classes.browserIcon} src={Chrome} />
+                <ChromeIcon className={classes.browserIcon} />
                 Chrome
               </Typography>
               <Button
@@ -198,7 +194,7 @@ const Landing = ({}: LandingProps) => {
 
             <Paper className={classes.getItItem} variant="outlined">
               <Typography variant="h3" align="center">
-                <img className={classes.browserIcon} src={Firefox} />
+                <FirefoxIcon className={classes.browserIcon} />
                 Firefox
               </Typography>
               <Button
@@ -213,7 +209,7 @@ const Landing = ({}: LandingProps) => {
             {/*
             <Paper className={classes.getItItem} variant="outlined">
               <Typography variant="h3" align="center">
-                <img className={classes.browserIcon} src={Safari} />
+                <SafariIcon className={classes.browserIcon} />
                 Safari
               </Typography>
             </Paper>

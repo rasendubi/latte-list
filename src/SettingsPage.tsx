@@ -15,14 +15,12 @@ import {
 } from '@material-ui/core';
 import ArrowBack from '@material-ui/icons/ArrowBack';
 
-import Chrome from '@fortawesome/fontawesome-free/svgs/brands/chrome.svg';
-import Firefox from '@fortawesome/fontawesome-free/svgs/brands/firefox.svg';
-
 import firebase from '@/firebase/client';
 import { useUser } from '@/context/userContext';
 import { exportItems, importItems } from '@/lib/items';
 import { saveAuditOptIn, useAuditOptIn } from '@/lib/audit';
 import { useNotifications } from '@/lib/notifications';
+import { ChromeIcon, FirefoxIcon } from '@/lib/icons';
 
 export interface SettingsPageProps {}
 
@@ -144,14 +142,14 @@ const SettingsPage = ({}: SettingsPageProps) => {
             <Button
               variant="outlined"
               href="https://chrome.google.com/webstore/detail/latte-list/jkdfdapgbjiabmmlckaibmapkdkmgfjp"
-              startIcon={<img className={classes.browserIcon} src={Chrome} />}
+              startIcon={<ChromeIcon className={classes.browserIcon} />}
             >
               Chrome
             </Button>
             <Button
               variant="outlined"
               href="https://addons.mozilla.org/en-US/firefox/addon/latte-list/"
-              startIcon={<img className={classes.browserIcon} src={Firefox} />}
+              startIcon={<FirefoxIcon className={classes.browserIcon} />}
             >
               Firefox
             </Button>

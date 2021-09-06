@@ -17,15 +17,12 @@ import {
 } from '@material-ui/core';
 import SettingsIcon from '@material-ui/icons/Settings';
 
-import Chrome from '@fortawesome/fontawesome-free/svgs/brands/chrome.svg';
-import Firefox from '@fortawesome/fontawesome-free/svgs/brands/firefox.svg';
-
 import firebase, { useCollection } from '@/firebase/client';
 import { useUser } from '@/context/userContext';
 import ItemsList from '@/components/ItemsList';
 import { Item } from '@/lib/Item';
 import { useReviewItem } from '@/lib/useReviewItem';
-import { AddIcon } from '@/lib/icons';
+import { AddIcon, ChromeIcon, FirefoxIcon } from '@/lib/icons';
 import { useNotifications } from '@/lib/notifications';
 import InstallBar from '@/components/InstallBar';
 import { useFaviconBadge } from '@/lib/useFaviconBadge';
@@ -121,16 +118,14 @@ const Home = ({}: HomeProps) => {
               <Button
                 variant="outlined"
                 href="https://chrome.google.com/webstore/detail/latte-list/jkdfdapgbjiabmmlckaibmapkdkmgfjp"
-                startIcon={<img className={classes.browserIcon} src={Chrome} />}
+                startIcon={<ChromeIcon className={classes.browserIcon} />}
               >
                 Chrome
               </Button>
               <Button
                 variant="outlined"
                 href="https://addons.mozilla.org/en-US/firefox/addon/latte-list/"
-                startIcon={
-                  <img className={classes.browserIcon} src={Firefox} />
-                }
+                startIcon={<FirefoxIcon className={classes.browserIcon} />}
               >
                 Firefox
               </Button>

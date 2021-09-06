@@ -11,6 +11,10 @@ export { default as CloseIcon } from '@material-ui/icons/Close';
 export { default as AddIcon } from '@material-ui/icons/Add';
 export { default as LogoutIcon } from '@material-ui/icons/Logout';
 
+import Chrome from '@fortawesome/fontawesome-free/svgs/brands/chrome.svg';
+import Firefox from '@fortawesome/fontawesome-free/svgs/brands/firefox.svg';
+import Safari from '@fortawesome/fontawesome-free/svgs/brands/safari.svg';
+
 export function PinIcon({
   unpin,
   ...props
@@ -25,4 +29,22 @@ export function PinIcon({
       }}
     />
   );
+}
+
+export function ChromeIcon(
+  props: Omit<React.ComponentPropsWithoutRef<'img'>, 'src'>
+) {
+  return <img src={Chrome} {...props} />;
+}
+
+export function FirefoxIcon(
+  props: Omit<React.ComponentPropsWithoutRef<'img'>, 'src'>
+) {
+  return <img src={Firefox} {...props} />;
+}
+
+export function SafariIcon(
+  props: Omit<React.ComponentPropsWithoutRef<'img'>, 'src'>
+) {
+  return <img src={Safari} {...props} />;
 }
