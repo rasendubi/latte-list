@@ -17,6 +17,9 @@ import {
 } from '@material-ui/core';
 import SettingsIcon from '@material-ui/icons/Settings';
 
+import Chrome from '@fortawesome/fontawesome-free/svgs/brands/chrome.svg';
+import Firefox from '@fortawesome/fontawesome-free/svgs/brands/firefox.svg';
+
 import firebase, { useCollection } from '@/firebase/client';
 import { useUser } from '@/context/userContext';
 import ItemsList from '@/components/ItemsList';
@@ -34,7 +37,7 @@ const Home = ({}: HomeProps) => {
 
   const [filter, setFilter] = React.useState('pinned');
 
-  const pinnedQuery = React.useMemo(() => {
+  const query = React.useMemo(() => {
     if (!user) return null;
     const base = firebase
       .firestore()
@@ -46,7 +49,18 @@ const Home = ({}: HomeProps) => {
       ? base.orderBy('addedOn', 'desc')
       : base.where('pinnedOn', '!=', null).orderBy('pinnedOn');
   }, [user, filter]);
-  const pinned = useCollection(pinnedQuery);
+  const items = useCollection(query);
+
+  const anyItemQuery = React.useMemo(() => {
+    return (
+      user &&
+      (firebase
+        .firestore()
+        .collection(`users/${user.uid}/items`)
+        .limit(1) as firebase.firestore.CollectionReference<Item>)
+    );
+  }, [user]);
+  const anyItem = useCollection(anyItemQuery);
 
   const history = useHistory();
 
@@ -89,70 +103,108 @@ const Home = ({}: HomeProps) => {
       </AppBar>
       <InstallBar />
       <Container className={classes.root} maxWidth="sm">
-        <div className={classes.captionLine}>
-          <Typography variant="subtitle2">{'Items'}</Typography>
-          <Select
-            className={classes.filterSelect}
-            disableUnderline={true}
-            value={filter}
-            onChange={(e) => setFilter(e.target.value as string)}
-          >
-            <MenuItem value={'all'}>{'All'}</MenuItem>
-            <MenuItem value={'pinned'}>{'Pinned'}</MenuItem>
-          </Select>
-        </div>
-        {pinned &&
-          !pinned.docs.length &&
-          (isReviewLoading ? null : (
-            <>
-              <Typography
-                style={{ marginTop: 64, marginLeft: 24, marginRight: 24 }}
-                // color="textSecondary"
-                align="center"
-                gutterBottom={true}
+        {!anyItem ? null /* still loading */ : anyItem.docs.length === 0 ? (
+          <>
+            <Typography
+              variant="h4"
+              style={{ marginTop: 64, marginLeft: 24, marginRight: 24 }}
+              align="center"
+              gutterBottom={true}
+            >
+              Add your first item
+            </Typography>
+            <Typography align="center">
+              You can add items by using the “+” button below or from one of our
+              browser extensions:
+            </Typography>
+            <div className={classes.browserButtonsLine}>
+              <Button
+                variant="outlined"
+                href="https://chrome.google.com/webstore/detail/latte-list/jkdfdapgbjiabmmlckaibmapkdkmgfjp"
+                startIcon={<img className={classes.browserIcon} src={Chrome} />}
               >
-                {reviewItem
-                  ? 'No pinned items'
-                  : nextReview
-                  ? 'Next review ' + moment(nextReview).from(now)
-                  : 'No items to review. Bookmark more and come back later.'}
-              </Typography>
-              {reviewItem ? (
-                <Button
-                  // variant="outlined"
-                  variant="contained"
-                  color="primary"
-                  disabled={!reviewItem}
-                  onClick={() => history.push('/review')}
-                >
-                  {'Review'}
-                </Button>
-              ) : nextReview &&
-                notifications.supported &&
-                notifications.permission !== 'denied' &&
-                notifications.enabled === false ? (
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  style={{ marginTop: 12 }}
-                  onClick={() => notifications.setEnabled(true)}
-                >
-                  {'Notify me'}
-                </Button>
-              ) : nextReview &&
-                notifications.supported &&
-                notifications.enabled ? (
+                Chrome
+              </Button>
+              <Button
+                variant="outlined"
+                href="https://addons.mozilla.org/en-US/firefox/addon/latte-list/"
+                startIcon={
+                  <img className={classes.browserIcon} src={Firefox} />
+                }
+              >
+                Firefox
+              </Button>
+            </div>
+            <Typography align="center">
+              If you open the app from the Chrome on your mobile phone, you can
+              install it, and then add items by sharing into the app.
+            </Typography>
+          </>
+        ) : (
+          <>
+            <div className={classes.captionLine}>
+              <Typography variant="subtitle2">{'Items'}</Typography>
+              <Select
+                className={classes.filterSelect}
+                disableUnderline={true}
+                value={filter}
+                onChange={(e) => setFilter(e.target.value as string)}
+              >
+                <MenuItem value={'all'}>{'All'}</MenuItem>
+                <MenuItem value={'pinned'}>{'Pinned'}</MenuItem>
+              </Select>
+            </div>
+            {items?.docs.length === 0 && !isReviewLoading && (
+              <>
                 <Typography
-                  variant="caption"
-                  color="textSecondary"
+                  style={{ marginTop: 64, marginLeft: 24, marginRight: 24 }}
                   align="center"
+                  gutterBottom={true}
                 >
-                  You will be notified
+                  {reviewItem
+                    ? 'No pinned items'
+                    : nextReview
+                    ? 'Next review ' + moment(nextReview).from(now)
+                    : 'No items to review. Bookmark more and come back later.'}
                 </Typography>
-              ) : null}
-            </>
-          ))}
-        <ItemsList className={classes.itemsList} items={pinned?.docs ?? []} />
+
+                {reviewItem ? (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    disabled={!reviewItem}
+                    onClick={() => history.push('/review')}
+                  >
+                    {'Review'}
+                  </Button>
+                ) : nextReview &&
+                  notifications.supported &&
+                  notifications.permission !== 'denied' &&
+                  notifications.enabled === false ? (
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    style={{ marginTop: 12 }}
+                    onClick={() => notifications.setEnabled(true)}
+                  >
+                    {'Notify me'}
+                  </Button>
+                ) : nextReview &&
+                  notifications.supported &&
+                  notifications.enabled ? (
+                  <Typography
+                    variant="caption"
+                    color="textSecondary"
+                    align="center"
+                  >
+                    You will be notified
+                  </Typography>
+                ) : null}
+              </>
+            )}
+          </>
+        )}
+        <ItemsList className={classes.itemsList} items={items?.docs ?? []} />
         <Fab
           className={classes.addButton}
           color="secondary"
@@ -194,6 +246,16 @@ const useStyles = makeStyles((theme) =>
       position: 'fixed',
       right: 16,
       bottom: 16,
+    },
+    browserButtonsLine: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: 8,
+      margin: '8px 0 16px',
+    },
+    browserIcon: {
+      width: 20,
+      height: 20,
     },
   })
 );
