@@ -228,8 +228,11 @@ const Landing = ({}: LandingProps) => {
             </Typography>
             <Typography variant="body2" color="primary">
               Have any question? Hit me at{' '}
-              <a className={classes.link} href="mailto:rasen.dubi@gmail.com">
-                rasen.dubi@gmail.com
+              <a
+                className={classes.link}
+                href={`mailto:${process.env.SUPPORT_EMAIL}`}
+              >
+                {process.env.SUPPORT_EMAIL}
               </a>
             </Typography>
             <Typography variant="body2" color="primary">
