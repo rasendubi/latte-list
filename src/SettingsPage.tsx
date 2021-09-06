@@ -15,10 +15,13 @@ import {
 } from '@material-ui/core';
 import ArrowBack from '@material-ui/icons/ArrowBack';
 
+import Chrome from '@fortawesome/fontawesome-free/svgs/brands/chrome.svg';
+import Firefox from '@fortawesome/fontawesome-free/svgs/brands/firefox.svg';
+
 import firebase from '@/firebase/client';
 import { useUser } from '@/context/userContext';
 import { exportItems, importItems } from '@/lib/items';
-import { saveAuditOptIn, useAuditOptIn } from './lib/audit';
+import { saveAuditOptIn, useAuditOptIn } from '@/lib/audit';
 import { useNotifications } from '@/lib/notifications';
 
 export interface SettingsPageProps {}
@@ -50,22 +53,6 @@ const SettingsPage = ({}: SettingsPageProps) => {
         </Toolbar>
       </AppBar>
       <Container className={classes.container} maxWidth="sm">
-        <Section title="Account">
-          <div className={classes.sectionLine}>
-            <Typography className={classes.signOutText} gutterBottom={true}>
-              {'Signed in as '}
-              {user?.email}
-            </Typography>
-            <Button
-              variant="outlined"
-              className={classes.button}
-              onClick={() => firebase.auth().signOut()}
-            >
-              {'Sign Out'}
-            </Button>
-          </div>
-        </Section>
-
         <Section title="Notifications">
           {notifications.supported ? (
             <>
@@ -95,33 +82,6 @@ const SettingsPage = ({}: SettingsPageProps) => {
           null}
         </Section>
 
-        <Section title="Data">
-          <Button
-            variant="outlined"
-            className={classes.button}
-            onClick={() => user && exportItems(user.uid)}
-          >
-            {'Export'}
-          </Button>
-          <Button
-            variant="outlined"
-            className={classes.button}
-            onClick={async () => {
-              if (!user) return;
-              const { itemsImported } = await importItems(user.uid);
-              setSnackbarContent(`${itemsImported} items imported`);
-            }}
-          >
-            {'Import'}
-          </Button>
-          <Snackbar
-            open={!!snackbarContent}
-            autoHideDuration={5000}
-            onClose={() => setSnackbarContent(null)}
-            message={snackbarContent}
-          />
-        </Section>
-
         <Section title="Data collection">
           <div className={classes.sectionLine}>
             <Typography>
@@ -133,6 +93,68 @@ const SettingsPage = ({}: SettingsPageProps) => {
                 saveAuditOptIn(e.target.checked);
               }}
             />
+          </div>
+        </Section>
+
+        <Section title="Data">
+          <div className={classes.buttonLine}>
+            <Button
+              variant="outlined"
+              onClick={() => user && exportItems(user.uid)}
+            >
+              {'Export'}
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={async () => {
+                if (!user) return;
+                const { itemsImported } = await importItems(user.uid);
+                setSnackbarContent(`${itemsImported} items imported`);
+              }}
+            >
+              {'Import'}
+            </Button>
+          </div>
+          <Snackbar
+            open={!!snackbarContent}
+            autoHideDuration={5000}
+            onClose={() => setSnackbarContent(null)}
+            message={snackbarContent}
+          />
+        </Section>
+
+        <Section title="Account">
+          <div className={classes.sectionLine}>
+            <Typography className={classes.signOutText} gutterBottom={true}>
+              {'Signed in as '}
+              {user?.email}
+            </Typography>
+            <Button
+              variant="outlined"
+              style={{ flex: 'none' }}
+              onClick={() => firebase.auth().signOut()}
+            >
+              {'Sign Out'}
+            </Button>
+          </div>
+        </Section>
+
+        <Section title="Browser extensions">
+          <div className={classes.buttonLine}>
+            <Button
+              variant="outlined"
+              href="https://chrome.google.com/webstore/detail/latte-list/jkdfdapgbjiabmmlckaibmapkdkmgfjp"
+              startIcon={<img className={classes.browserIcon} src={Chrome} />}
+            >
+              Chrome
+            </Button>
+            <Button
+              variant="outlined"
+              href="https://addons.mozilla.org/en-US/firefox/addon/latte-list/"
+              startIcon={<img className={classes.browserIcon} src={Firefox} />}
+            >
+              Firefox
+            </Button>
           </div>
         </Section>
       </Container>
@@ -190,11 +212,14 @@ const useStyles = makeStyles((theme) =>
       alignItems: 'center',
       justifyContent: 'space-between',
     },
-    button: {
-      textTransform: 'none',
-      marginRight: 8,
-      marginBottom: 8,
-      flex: 'none',
+    buttonLine: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: 8,
+    },
+    browserIcon: {
+      width: 20,
+      height: 20,
     },
   })
 );
