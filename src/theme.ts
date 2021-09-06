@@ -29,6 +29,7 @@ const theme = createTheme({
       fontWeight: 700,
     },
     button: {
+      fontSize: '1rem',
       textTransform: 'unset',
     },
   },

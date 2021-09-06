@@ -21,6 +21,7 @@ import { exportItems, importItems } from '@/lib/items';
 import { saveAuditOptIn, useAuditOptIn } from '@/lib/audit';
 import { useNotifications } from '@/lib/notifications';
 import { ChromeIcon, FirefoxIcon } from '@/lib/icons';
+import DeleteAccountDialog from './components/DeleteAccountDialog';
 
 export interface SettingsPageProps {}
 
@@ -28,6 +29,8 @@ const SettingsPage = ({}: SettingsPageProps) => {
   const history = useHistory();
   const { user } = useUser();
   const auditOptIn = useAuditOptIn();
+
+  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
 
   const [snackbarContent, setSnackbarContent] = React.useState<string | null>(
     null
@@ -135,6 +138,20 @@ const SettingsPage = ({}: SettingsPageProps) => {
               {'Sign Out'}
             </Button>
           </div>
+          <div className={classes.sectionLine}>
+            <Button
+              size="small"
+              style={{ color: '#C56C6C', marginLeft: -5 }}
+              onClick={() => setDeleteDialogOpen(true)}
+            >
+              Delete account
+            </Button>
+          </div>
+          <DeleteAccountDialog
+            open={deleteDialogOpen}
+            onClose={() => setDeleteDialogOpen(false)}
+            onDelete={() => firebase.auth().currentUser?.delete()}
+          />
         </Section>
 
         <Section title="Browser extensions">
