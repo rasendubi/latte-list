@@ -18,6 +18,21 @@ const SignInButton = ({ variant }: SignInButtonProps) => {
   const classes = useStyles();
 
   const [error, setError] = React.useState<null | firebase.auth.Error>(null);
+  React.useEffect(() => {
+    firebase
+      .auth()
+      .getRedirectResult()
+      .then(() => {
+        // not interested in the user object
+      })
+      .catch((e) => {
+        if (typeof e.code === 'string' && e.code.startsWith('auth/')) {
+          setError(e);
+        } else {
+          throw e;
+        }
+      });
+  }, []);
 
   const signIn = async () => {
     try {
@@ -41,7 +56,12 @@ const SignInButton = ({ variant }: SignInButtonProps) => {
         const credential = firebase.auth.GoogleAuthProvider.credential(idToken);
         await firebase.auth().signInWithCredential(credential);
       } else {
-        await firebase.auth().signInWithPopup(provider);
+        // There are issues with sign in mobile safari. See
+        // https://github.com/firebase/firebase-js-sdk/issues/4256#issuecomment-852252857
+        //
+        // One of the suggested solutions is using
+        // `signInWithRedirect` instead of `signInWithPopup`.
+        await firebase.auth().signInWithRedirect(provider);
       }
     } catch (e) {
       if (typeof e.code === 'string' && e.code.startsWith('auth/')) {
