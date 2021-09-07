@@ -210,7 +210,8 @@ export function useCloseNotifications(filter?: GetNotificationOptions) {
 
     const clearNotifications = () => {
       if (document.visibilityState === 'visible') {
-        registration.getNotifications(filter).then((notifications) => {
+        // Safari does not have “getNotifications” in registration.
+        registration.getNotifications?.(filter).then((notifications) => {
           notifications.forEach((n) => n.close());
         });
       }
